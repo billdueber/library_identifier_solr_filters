@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>edu.umich.lib</groupId>
+  <artifactId>library_identifier_solr_filters</artifactId>
+  <version>0.1</version>
+
+  <build>
+    <finalName>library_identifier_solr_filters-${project.version}-solr${solr.version}</finalName>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>7</source>
+          <target>7</target>
+        </configuration>
+      </plugin>
+    </plugins>
+    <sourceDirectory>src/main</sourceDirectory>
+  </build>
+
+
+  <properties>
+    <solr.version>8.8.2</solr.version>
+    <icu.version>69.1</icu.version>
+
+
+    <!--    <maven.compiler.source>8</maven.compiler.source>-->
+    <!--    <maven.compiler.target>8</maven.compiler.target>-->
+  </properties>
+
+
+  <dependencies>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>5.7.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>1.7.30</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.lucene</groupId>
+      <artifactId>lucene-analyzers-icu</artifactId>
+      <version>8.8.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-analysis-extras</artifactId>
+      <version>8.8.2</version>
+    </dependency>
+    <dependency>
+      <groupId>com.ibm.icu</groupId>
+      <artifactId>icu4j</artifactId>
+      <version>69.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-core</artifactId>
+      <version>8.8.2</version>
+    </dependency>
+  </dependencies>
+
+</project>
+
