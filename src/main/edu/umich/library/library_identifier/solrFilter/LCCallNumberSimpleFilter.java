@@ -63,8 +63,6 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
     }
 
     String t = myTermAttribute.toString();
-    LOGGER.warn("Trying on " + t);
-    LOGGER.warn("allowInvalid is " + allowInvalid.toString());
     if (t != null && t.length() != 0) {
       try {
         myTermAttribute.setEmpty();
@@ -72,8 +70,9 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
         if (lc.isValid) {
           myTermAttribute.append(lc.collation_key());
         } else if (allowInvalid) {
-          LOGGER.warn("GOT HERE");
           myTermAttribute.append(lc.invalid_collation_key());
+        } else {
+          return false;
         }
       } catch (IllegalArgumentException details) {
         if (LOGGER.isInfoEnabled()) {
