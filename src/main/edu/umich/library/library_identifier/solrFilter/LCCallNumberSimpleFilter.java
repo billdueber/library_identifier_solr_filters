@@ -17,7 +17,7 @@ import java.io.IOException;
  * can be used for left-anchored search if turned into edge-ngrams.
  * <p>
  *
- * <fieldType name="lc_callnumber_sortable" keepInvalid="true">
+ * <fieldType name="callnumber_sortable" passThroughInvalid="true">
  *
  * </fieldType>
  */
@@ -35,19 +35,19 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
       addAttribute(CharTermAttribute.class);
 
   /**
-   * Should we pass through an invalid (doens't look like) callnumber,
+   * Should we pass through an invalid (doesn't look like) callnumber,
    * or return nothing (default)
    */
 
-  private Boolean allowInvalid = false;
+  private Boolean passThroughInvalid = false;
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
    *                ISO-639-1 and ISO-639-2 codes
    */
-  public LCCallNumberSimpleFilter(TokenStream aStream, Boolean passThrough) {
+  public LCCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughInvalid) {
     super(aStream);
-    allowInvalid = passThrough;
+    this.passThroughInvalid = passThroughInvalid;
   }
 
   /**
@@ -69,7 +69,7 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
         LCCallNumberSimple lc = new LCCallNumberSimple(t);
         if (lc.isValid) {
           myTermAttribute.append(lc.collation_key());
-        } else if (allowInvalid) {
+        } else if (passThroughInvalid) {
           myTermAttribute.append(lc.invalid_collation_key());
         } else {
           return false;
