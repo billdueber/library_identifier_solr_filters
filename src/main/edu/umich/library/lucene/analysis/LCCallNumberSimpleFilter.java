@@ -1,4 +1,4 @@
-package edu.umich.library.library_identifier.solrFilter;
+package edu.umich.library.lucene.analysis;
 
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -10,7 +10,6 @@ import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
 
 import java.io.IOException;
 
-
 /**
  * A Solr filter that take an LC Call Number (/ shelf key) and
  * turns it into something that can be sorted correctly _and_
@@ -21,6 +20,7 @@ import java.io.IOException;
  *
  * </fieldType>
  */
+
 public final class LCCallNumberSimpleFilter extends TokenFilter {
   /**
    * Logger used to log info/warnings.

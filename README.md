@@ -3,7 +3,8 @@
 ## Overview
 
 This is a series of simple solr analysis-chain filters useful to those
-dealing with library identifiers such as ISBN/ISSN, LCCN, LC Callnumber, etc.
+dealing with library identifiers (currently only LC Callnumbers, but
+more to come).
 
 ## Getting/generating the .jar file
 
@@ -51,14 +52,77 @@ mycore
 <lib dir="${solr.core.config}/lib" regex=".*\.jar"/>
 ```
 
-## LC Callnumber Simple
+## LC Callnumbers
 
 This is a simple/simplistic attempt to take LC callnumbers and turn them
-into something sortable/searchable. It does very little to massage the 
-callnumbers before indexing. 
+into something sortable/searchable. It does the bare minimum to massage the 
+callnumbers before indexing.
+
+In addition to the underlying code to do the conversion, there are two ways
+to use it in fieldTypes.
+
+### LCCallNumberSimpleFilterFactory for prefix queries
+
+An analysis filter that will take a token and perform the callnumber
+normalization (or at least do its best), suitable for use with
+the edge n-gram filter for providing It requires 
+that callnumbers be treated as a single token, so should only be used 
+with a keyword tokenizer.
+
+Note that this filter will never be called for range searches; if you 
+want to use ranges see the `CallnumberSortableFieldType`.
+
+A good fieldType definition for prefix searches is as follows:
+
+```xml
+<fieldType name="callnumber_prefix_search"  class="solr.TextField">
+  <analyzer type="index">
+    <tokenizer class="solr.KeywordTokenizerFactory"/>
+    <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughInvalid="true"/>
+    <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
+  </analyzer>
+  <analyzer type="query">
+    <tokenizer class="solr.KeywordTokenizerFactory"/>
+    <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughInvalid="true"/>
+  </analyzer>
+</fieldType>
+```
 
 
-### Explanation
+### The CallnumberSortableFieldType
+
+`CallnumberSortableFieldType` is a derivative of `solr.String` which does
+the callnumber conversion on the way in (for both stored and indexed values). 
+This not only gives you a sortable value (which the filter does as well),
+but allows the type to be used correctly with ranges (since Solr doesn't
+run the analysis chain for range queries).
+
+Because it's implemented as a FieldType, all the normalization works
+as you'd expect (e.g., `callnumber_search:[qa20 to *]` will pick up
+the callnumber "QA 20.2" and not "QA 3.11 .D4"). 
+
+The FieldType can/should be used for both exact queries and range queries,
+as well as (pretty) accurate sorting,
+but can't be used for prefix search since it's not a part of the analysis 
+chain (being based on String and not TextField), hence the filter, above.
+
+```xml
+
+<fieldType name="callnumber_sortable" class="edu.umich.library.
+library_identifier.schema.CallnumberSortableFieldType" />
+
+
+<field name="callnumber_search" type="callnumber_sortable"
+       multiValued="true"/>
+
+<field name="callnumber_sort" type="callnumber_sortable"
+       multiValued="false"/>
+
+
+```
+
+
+### The normalization algorithm
 
 Given a callnumber:
 ```
@@ -98,57 +162,4 @@ The invalid callnumber passed through isn't exactly the same as what
 was passed in -- we still do lowercasing, space collapse/trim, and remove
 non-decimal-place-looking punctuation.
 
-## Left-anchored ("starts with") searching
-Solr's wildcard search (.e.g, 'QA1*`) doesn't work for "start-with" searching
-because it ignores the whole analysis pipeline. To get around this we can 
-use edge n-grams such that:
-
-  * "QA 1" will match `QA1` and `QA1.4` but not `QA11`
-  * Spaces and punctuation will be ignored
-
-### Usage
-
-The resulting indexed value is suitable for both sorting and left-anchored
-searching.
-
-```xml
-    <!-- Turn LC callnumbers into something sortable. Ignores anything 
-         that doesn't look like a callnumber, and must be single valued
-         if it's going to be used for sorting. -->
-    <fieldType name="lc_callnumber_sortable" class="solr.TextField" 
-               multiValued="false">
-      <analyzer>
-          <tokenizer class="solr.KeywordTokenizerFactory"/>
-          <filter class="edu.umich.library.library_identifier.solrFilter.LCCallNumberSimpleFilterFactory"
-                  allowInvalid="false"/>
-        </analyzer>
-    </fieldType>
-
-    <!-- Make LC Callnumbers left-anchored ("starts with") searchable. 
-         Do _not_ add a trailing '*' to your searches -- this is not a 
-         wildcard search. Allow invalid callnumbers to just be 
-         passed through, so folks can search on those, too, albeit
-         not as well.-->
-
-  <fieldType name="lc_callnumber_starts_with" class="solr.TextField">
-    <analyzer type="index">
-      <tokenizer class="solr.KeywordTokenizerFactory"/>
-      <filter class="edu.umich.library.library_identifier.solrFilter.LCCallNumberSimpleFilterFactory" allowInvalid="true"/>
-      <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
-    </analyzer>
-    <analyzer type="query">
-      <tokenizer class="solr.KeywordTokenizerFactory"/>
-      <filter class="edu.umich.library.library_identifier.solrFilter.LCCallNumberSimpleFilterFactory" allowInvalid="true"/>
-    </analyzer>
-  </fieldType>
-
-  <!-- A couple example fields. The sortable one must be single valued, so 
-    you need to pick a canonical lc callnumber for each record.
-    For searching, there's no need to restrict ourselves to one value. -->
-  <field name="lc_sortable" type="lc_callnumber_sortable" indexed="true" 
-         stored="true" multiValued="false"/>
-  <field name="lc_starts_with" type="lc_callnumber_starts_with" indexed="true"
-         stored="false" multiValued="true"/>
-
-```
 

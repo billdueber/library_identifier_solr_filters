@@ -50,6 +50,14 @@ public class LCCallNumberSimple {
         return cleanup_freetext(original);
     }
 
+    public String any_collation_key() {
+        if (isValid) {
+            return collation_key();
+        } else {
+            return invalid_collation_key();
+        }
+    }
+
     public String collation_letters() {
         return letters;
     }
