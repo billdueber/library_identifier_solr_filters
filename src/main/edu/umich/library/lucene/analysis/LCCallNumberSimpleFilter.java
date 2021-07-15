@@ -1,5 +1,6 @@
 package edu.umich.library.lucene.analysis;
 
+import edu.umich.library.library_identifier.normalizers.CallnumberInterface;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -21,7 +22,7 @@ import java.io.IOException;
  * </fieldType>
  */
 
-public final class LCCallNumberSimpleFilter extends TokenFilter {
+public class LCCallNumberSimpleFilter extends TokenFilter {
   /**
    * Logger used to log info/warnings.
    */
@@ -39,15 +40,23 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
    * or return nothing (default)
    */
 
-  private Boolean passThroughInvalid = false;
+  private String accept = "valid";
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
    *                ISO-639-1 and ISO-639-2 codes
    */
-  public LCCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughInvalid) {
+  public LCCallNumberSimpleFilter(TokenStream aStream, String accept) {
     super(aStream);
-    this.passThroughInvalid = passThroughInvalid;
+    this.accept = accept;
+  }
+
+  /**
+   * Get a callnumber object. Generalized so we can easily subclass this.
+   */
+
+  public CallnumberInterface callnumber(String str) {
+    return new LCCallNumberSimple(str);
   }
 
   /**
@@ -66,10 +75,10 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
     if (t != null && t.length() != 0) {
       try {
         myTermAttribute.setEmpty();
-        LCCallNumberSimple lc = new LCCallNumberSimple(t);
+        CallnumberInterface lc = callnumber(t);
         if (lc.isValid) {
           myTermAttribute.append(lc.collation_key());
-        } else if (passThroughInvalid) {
+        } else if (accept.equals("any")) {
           myTermAttribute.append(lc.invalid_collation_key());
         } else {
           return false;
