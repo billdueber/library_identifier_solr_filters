@@ -34,7 +34,7 @@ public class LCCallnumberFieldType extends StrField {
     if (lccns.isValid) {
       return lccns.collation_key();
     }
-    if (accept.equals("all")) {
+    if (accept.equals("all") || accept.equals("any")) {
       return lccns.invalid_collation_key();
     } else {
       return null;
