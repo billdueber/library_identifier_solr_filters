@@ -14,4 +14,11 @@ class LCCallNumberSimpleTest {
         String key = new LCCallNumberSimple(original).collation_key();
         assert(key).equals(collation);
     }
+
+    @Test
+    void whitespace_callnumber() {
+        LCCallNumberSimple lccns = new LCCallNumberSimple(" ");
+        String key = lccns.any_collation_key();
+        assert(key).isEmpty();
+    }
 }

@@ -7,7 +7,7 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LCCallNumberSimple {
+public class LCCallNumberSimple implements CallnumberInterface {
 
     public  String original;
     public  String letters = "";
@@ -47,7 +47,7 @@ public class LCCallNumberSimple {
     }
 
     public String invalid_collation_key() {
-        return cleanup_freetext(original);
+        return cleanup_freetext(original).trim();
     }
 
     public String any_collation_key() {
@@ -84,6 +84,9 @@ public class LCCallNumberSimple {
     }
 
     private String cleanup_freetext(String str) {
+        if (str.length() == 0) {
+            return "";
+        }
         return str.toLowerCase(Locale.ROOT).replaceAll("\\s+\\.(\\p{L})", " $1")
             .replaceAll("(\\d)\\.(\\d)", "$1AAAAA$2")
             .replaceAll("\\p{P}", "")

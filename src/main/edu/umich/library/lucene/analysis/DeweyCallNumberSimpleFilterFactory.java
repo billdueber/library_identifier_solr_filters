@@ -26,16 +26,16 @@ import java.util.Map;
  *   </analyzer>
  * </fieldType>
  */
-public class LCCallNumberSimpleFilterFactory extends TokenFilterFactory {
+public class DeweyCallNumberSimpleFilterFactory extends TokenFilterFactory {
   private String accept = "valid";
 
-  public LCCallNumberSimpleFilterFactory(Map<String, String> args) {
+  public DeweyCallNumberSimpleFilterFactory(Map<String, String> args) {
     super(args);
     accept = args.get("accept");
   }
 
   @Override
-  public LCCallNumberSimpleFilter create(TokenStream input) {
-    return new LCCallNumberSimpleFilter(input, accept);
+  public DeweyCallNumberSimpleFilter create(TokenStream input) {
+    return new DeweyCallNumberSimpleFilter(input, accept);
   }
 }
