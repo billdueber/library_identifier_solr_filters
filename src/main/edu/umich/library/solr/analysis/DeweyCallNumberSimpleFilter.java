@@ -1,8 +1,7 @@
-package edu.umich.library.lucene.analysis;
+package edu.umich.library.solr.analysis;
 
 import edu.umich.library.library_identifier.normalizers.CallnumberInterface;
 import edu.umich.library.library_identifier.normalizers.DeweyCallNumberSimple;
-import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
 import org.apache.lucene.analysis.TokenStream;
 
 public class DeweyCallNumberSimpleFilter extends LCCallNumberSimpleFilter {

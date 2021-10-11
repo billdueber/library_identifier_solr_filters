@@ -1,4 +1,4 @@
-package edu.umich.library.lucene.analysis;
+package edu.umich.library.solr.analysis;
 
 import edu.umich.library.library_identifier.normalizers.CallnumberInterface;
 import org.apache.lucene.analysis.TokenFilter;

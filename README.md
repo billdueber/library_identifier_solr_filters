@@ -78,12 +78,12 @@ A good fieldType definition for prefix searches is as follows:
 <fieldType name="callnumber_prefix_search"  class="solr.TextField">
   <analyzer type="index">
     <tokenizer class="solr.KeywordTokenizerFactory"/>
-    <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughInvalid="true"/>
+    <filter class="LCCallNumberSimpleFilterFactory" passThroughInvalid="true"/>
     <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
   </analyzer>
   <analyzer type="query">
     <tokenizer class="solr.KeywordTokenizerFactory"/>
-    <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughInvalid="true"/>
+    <filter class="LCCallNumberSimpleFilterFactory" passThroughInvalid="true"/>
   </analyzer>
 </fieldType>
 ```
