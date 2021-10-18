@@ -27,7 +27,7 @@ import java.util.Map;
  * </fieldType>
  */
 public class LCCallNumberSimpleFilterFactory extends TokenFilterFactory {
-  private Boolean passThroughInvalid = false;
+  private Boolean passThroughInvalid;
 
   public LCCallNumberSimpleFilterFactory(Map<String, String> args) {
     super(args);

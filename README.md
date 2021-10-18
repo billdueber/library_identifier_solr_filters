@@ -8,7 +8,7 @@ more to come).
 
 ## Getting/generating the .jar file
 
-You can just nab a .jar file from the github releases page. They're labeled
+You can just nab a .jar file from the [github releases page](https://github.com/billdueber/library_identifier_solr_filters/releases). They're labeled
 with the version of the library and the version of solr they're created
 against. 
 

@@ -3,6 +3,7 @@ package edu.umich.library.library_identifier.normalizers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -14,10 +15,10 @@ public class LCCallNumberSimple {
     public  String digits = "";
     public  String decimals = "";
     public  String rest = "";
-    public  Boolean isValid = false;
+    public  Boolean isValid;
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LCCallNumberSimple.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static Pattern lc_start = Pattern.compile(
             "^\\s*(?<letters>\\p{L}{1,4})\\s*" + // 1-4 initial letters, plus optional whitespace
@@ -64,7 +65,7 @@ public class LCCallNumberSimple {
 
     public String collation_digits() {
         Integer digit_length = digits.length();
-        return digit_length.toString() + digits;
+        return digit_length + digits;
     }
 
     public String collation_decimals() {
