@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 
 /**
  * A Solr filter that take an LC Call Number (/ shelf key) and
@@ -26,7 +27,7 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
    * Logger used to log info/warnings.
    */
   private static final Logger LOGGER = LoggerFactory
-      .getLogger(LCCallNumberSimpleFilter.class);
+      .getLogger(MethodHandles.lookup().lookupClass());
 
   /**
    * The filter term that is a result of the conversion.
@@ -39,7 +40,7 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
    * or return nothing (default)
    */
 
-  private Boolean passThroughInvalid = false;
+  private Boolean passThroughInvalid;
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
@@ -49,6 +50,11 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
     super(aStream);
     this.passThroughInvalid = passThroughInvalid;
   }
+
+  public LCCallNumberSimpleFilter(TokenStream aStream) {
+    this(aStream, false);
+  }
+
 
   /**
    * Increments and processes tokens in the ISO-639 code stream.
