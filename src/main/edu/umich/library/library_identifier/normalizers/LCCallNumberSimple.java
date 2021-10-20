@@ -43,8 +43,12 @@ public class LCCallNumberSimple {
     }
 
     public String collation_key() {
-        String key =  collation_letters() + collation_digits() + collation_decimals() + collation_rest();
-        return key.trim();
+        if (isValid) {
+            String key = collation_letters() + collation_digits() + collation_decimals() + collation_rest();
+            return key.trim();
+        } else {
+            return null;
+        }
     }
 
     public String invalid_collation_key() {
