@@ -21,14 +21,19 @@ public class LCCallNumberSimple {
     private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     public static Pattern lc_start = Pattern.compile(
-            "^\\s*(?<letters>\\p{L}{1,4})\\s*" + // 1-4 initial letters, plus optional whitespace
-                    "(?<digits>\\d+)" +                  // any number of digits
-                    "(?:\\.(?<decimals>\\d+))?(?<rest>.*)$");    // an optional decimal ('.' plus digits)
+            "^\\s*(?<letters>\\p{L}{1,3})\\s*" + // 1-3 initial letters, plus optional whitespace
+                    "(?<digits>\\d+)" +                  // any number of digits followed by whitespace
+                    "(?:\\.(?<decimals>\\d+))?" +   // an optional decimal ('.' plus digits)
+                    "(?:\\s+(?<rest>.*))?$" // either end of string, or whitespace plus other stuff
+    );
+    public static Pattern one_or_two_letters = Pattern.compile("^\\p{L}{1,2}$");
+
 
 
     public LCCallNumberSimple(String str) {
-        original = str.trim();
-        Matcher m = lc_start.matcher(original.toLowerCase());
+        original = str.trim().toLowerCase();
+        LOGGER.warn("got " + original);
+        Matcher m = lc_start.matcher(original);
         if (m.matches()) {
             isValid  = true;
             letters  = m.group("letters");
@@ -39,13 +44,24 @@ public class LCCallNumberSimple {
             LOGGER.debug("LC Callnumber '" + original + "' is invalid.");
             isValid = false;
         }
+        if (is_one_or_two_letters(original)) {
+            LOGGER.warn("Original matches one-or-two-letters");
+        }
 
+    }
+
+    public Boolean is_one_or_two_letters(String str) {
+        return one_or_two_letters.matcher(original).matches();
     }
 
     public String collation_key() {
         if (isValid) {
-            String key = collation_letters() + collation_digits() + collation_decimals() + collation_rest();
+            String key = collation_letters() + collation_digits() + collation_decimals() + " " + collation_rest();
             return key.trim();
+        }
+        if (is_one_or_two_letters(original)) {
+            LOGGER.warn("In here");
+           return original;
         } else {
             return null;
         }
@@ -56,7 +72,8 @@ public class LCCallNumberSimple {
     }
 
     public String any_collation_key() {
-        if (isValid) {
+        String c = collation_key();
+        if (c != null) {
             return collation_key();
         } else {
             return invalid_collation_key();
@@ -89,7 +106,7 @@ public class LCCallNumberSimple {
     }
 
     private String cleanup_freetext(String str) {
-        return str.toLowerCase(Locale.ROOT).replaceAll("\\s+\\.(\\p{L})", " $1")
+        return str.replaceAll("\\s+\\.(\\p{L})", " $1")
             .replaceAll("(\\d)\\.(\\d)", "$1AAAAA$2")
             .replaceAll("\\p{P}", "")
             .replaceAll("(\\d)AAAAA(\\d)", "$1.$2");
