@@ -31,7 +31,11 @@ public class CallnumberSortableFieldType extends StrField {
     if (passThroughInvalid) {
       return lccns.any_collation_key();
     } else {
-      return lccns.collation_key();
+      if (lccns.isValid) {
+        return lccns.collation_key();
+      } else {
+        return null;
+      }
     }
   }
 
