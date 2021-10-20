@@ -16,7 +16,7 @@ public class CallnumberSortableFieldType extends StrField {
   @Override
   public String toInternal(String val) {
     LCCallNumberSimple lccns = new LCCallNumberSimple(val);
-    return lccns.any_collation_key();
+    return lccns.collation_key();
   }
 
   @Override
