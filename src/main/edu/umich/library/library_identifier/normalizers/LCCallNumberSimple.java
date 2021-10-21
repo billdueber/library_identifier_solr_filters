@@ -24,7 +24,7 @@ public class LCCallNumberSimple {
             "^\\s*(?<letters>\\p{L}{1,3})\\s*" + // 1-3 initial letters, plus optional whitespace
                     "(?<digits>\\d+)" +                  // any number of digits followed by whitespace
                     "(?:\\.(?<decimals>\\d+))?" +   // an optional decimal ('.' plus digits)
-                    "(?:\\s+(?<rest>.*))?$" // either end of string, or whitespace plus other stuff
+                    "(?<rest>.*)?$"         // Whatever's left
     );
     public static Pattern one_or_two_letters = Pattern.compile("^\\p{L}{1,2}$");
 
