@@ -35,7 +35,6 @@ public class LCCallNumberSimple {
 
   public LCCallNumberSimple(String str) {
     original = str.trim().toLowerCase();
-    LOGGER.warn("got " + original);
     Matcher m = lc_start.matcher(original);
     if (m.matches()) {
       isValid  = true;
@@ -44,11 +43,11 @@ public class LCCallNumberSimple {
       decimals = m.group("decimals");
       rest     = m.group("rest");
     } else {
-      LOGGER.debug("LC Callnumber '" + original + "' is invalid.");
+      LOGGER.info("LC Callnumber '" + original + "' is invalid.");
       isValid = false;
     }
     if (is_acceptable_only_letters_query(original)) {
-      LOGGER.debug("Original '" + original + "'matches one-acceptable_only pattern");
+      LOGGER.info("Original '" + original + "'matches one-acceptable_only pattern");
     }
 
   }
