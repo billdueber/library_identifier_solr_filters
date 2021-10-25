@@ -62,7 +62,7 @@ public class LCCallNumberSimple {
 
   public String collation_key() {
     if (isValid) {
-      String key = collation_letters() + collation_digits() + collation_decimals() + " " + collation_rest();
+      String key = collation_letters() + collation_digits() + collation_decimals() + "!! " + collation_rest();
       return fix_spaces(key);
     }
     if (is_acceptable_only_letters_query(original)) {

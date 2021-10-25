@@ -37,9 +37,9 @@ public class CallNumberSortKeyFieldType extends StrField  {
 
     LCCallNumberSimple lccns = new LCCallNumberSimple(fields[0]);
     if (passThroughInvalid) {
-      return lccns.any_collation_key() + "!!" + rest_of_fields;
+      return lccns.any_collation_key() +  rest_of_fields;
     } else {
-      return lccns.collation_key() + "!!" + rest_of_fields;
+      return lccns.collation_key()  + rest_of_fields;
     }
   }
 
