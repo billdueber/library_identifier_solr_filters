@@ -20,7 +20,7 @@ public class LCCallNumberSimple {
   private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   public static Pattern lc_start = Pattern.compile(
-      "^\\s*(?<letters>\\p{L}{1,3})\\s*" + // 1-3 initial letters, plus optional whitespace
+      "^\\s*(?<letters>[Kk]?\\p{L}{1,2})\\s*" + // 1-2 (3 in the Ks) initial letters, plus optional whitespace
           "(?<digits>\\d+)" +                  // any number of digits
           "(?:\\.(?<decimals>\\d+))?" +   // an optional decimal ('.' plus digits)
           "(?<rest>.*)$"         // Whatever's left
