@@ -19,22 +19,33 @@ public class LCCallNumberSimple {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
+  // THe letters for a callnumber are either one letter, two letters, a K followed by 0-2 letters, or
+  // the three letter sequence LAW
+
+  public static String letter_pat = "(?<letters>(?:LAW|law|Law|[Kk]\\p{L}{0,2}|\\p{L}{1,2}))";
+
   public static Pattern lc_start = Pattern.compile(
-      "^\\s*(?<letters>[Kk]?\\p{L}{1,2})\\s*" + // 1-2 (3 in the Ks) initial letters, plus optional whitespace
+//      "^\\s*(?<letters>[KkLl]?\\p{L}{1,2})[-\\s]*" + // 1-2 (3 in the Ks) initial letters, plus optional whitespace
+        "^\\s*" + letter_pat + "\\s*" +
           "(?<digits>\\d+)" +                  // any number of digits
           "(?:\\.(?<decimals>\\d+))?" +   // an optional decimal ('.' plus digits)
-          "(?<rest>.*)$"         // Whatever's left
+          "(?<rest>.*)$"        // Whatever's left
+  );
+
+  // For trimming punctuation
+  public static Pattern trim_punct = Pattern.compile(
+      "^\\p{Punct}*(.*?)\\p{Punct}*$"
   );
 
   // When searching, we'll often want a range query that starts with only letters
   // That can be a single letter, any two-letter combination, or a set of three
-  // letters starting with "K" (books about legal issues)
+  // letters starting with "K" (books about legal issues) or "L" (more of the same).
   // @TODO Put a guard around letter-only queries so we only accept them when an argument to the constructor says to.
-  public static Pattern acceptable_only_letters = Pattern.compile("^[Kk]?\\p{L}{1,2}$");
+  public static Pattern acceptable_only_letters = Pattern.compile("^|[Kk]?\\p{L}{1,2}$");
 
 
   public LCCallNumberSimple(String str) {
-    original = str.trim().toLowerCase();
+    original = trim_punctuation(str.trim()).trim().toLowerCase();
     Matcher m = lc_start.matcher(original);
     if (m.matches()) {
       isValid  = true;
@@ -43,13 +54,25 @@ public class LCCallNumberSimple {
       decimals = m.group("decimals");
       rest     = m.group("rest");
     } else {
-      LOGGER.info("LC Callnumber '" + original + "' is invalid.");
+      LOGGER.debug("LC Callnumber '" + original + "' is invalid.");
       isValid = false;
     }
     if (is_acceptable_only_letters_query(original)) {
-      LOGGER.info("Original '" + original + "'matches one-acceptable_only pattern");
+      LOGGER.debug("Original '" + original + "'matches one-acceptable_only pattern");
     }
+  }
 
+  public Logger logger() {
+    return LOGGER;
+  }
+
+  public String trim_punctuation(String str) {
+    Matcher m = trim_punct.matcher(str);
+    if (m.matches()) {
+      return m.group(1);
+    } else {
+      return str;
+    }
   }
 
   public String fix_spaces(String str) {
@@ -62,7 +85,7 @@ public class LCCallNumberSimple {
 
   public String collation_key() {
     if (isValid) {
-      String key = collation_letters() + collation_digits() + collation_decimals() + "!! " + collation_rest();
+      String key = collation_letters() + collation_digits() + collation_decimals() +  collation_rest();
       return fix_spaces(key);
     }
     if (is_acceptable_only_letters_query(original)) {
@@ -106,7 +129,7 @@ public class LCCallNumberSimple {
     if ((rest == null) || (rest.equals(""))) {
       return "";
     } else {
-      return cleanup_freetext(rest);
+      return " " + cleanup_freetext(rest);
     }
   }
 
