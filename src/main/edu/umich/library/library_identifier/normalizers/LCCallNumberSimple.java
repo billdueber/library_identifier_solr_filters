@@ -76,11 +76,11 @@ public class LCCallNumberSimple {
   }
 
   public String fix_spaces(String str) {
-    return str.trim().replaceAll("\\s", " ");
+    return str.trim().replaceAll("\\s+", " ");
   }
 
   public Boolean is_acceptable_only_letters_query(String str) {
-    return acceptable_only_letters.matcher(original).matches();
+    return acceptable_only_letters.matcher(str).matches();
   }
 
   public String collation_key() {
