@@ -1,5 +1,7 @@
 package edu.umich.library.library_identifier.schema;
 
+import edu.umich.library.library_identifier.normalizers.AnyCallNumber;
+import edu.umich.library.library_identifier.normalizers.DeweySimple;
 import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.schema.StrField;
@@ -9,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 import java.util.Map;
 
-public class CallNumberSortKeyFieldType extends StrField  {
+public class CallNumberSortKeyFieldType extends StrField {
   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private Boolean passThroughInvalid = false;
 
@@ -24,6 +26,20 @@ public class CallNumberSortKeyFieldType extends StrField  {
     }
   }
 
+  public String validCallnumber(String str) {
+    LCCallNumberSimple lc = new LCCallNumberSimple(str);
+    if (lc.isValid) return lc.collation_key();
+
+    DeweySimple d = new DeweySimple(str);
+    if (d.isValid) return d.collation_key();
+
+    return null;
+  }
+
+  public String bundled_fields(String normalized_cn, String appended_field) {
+    return normalized_cn + END_OF_CALLNUMBER + FIELD_DELIMITER + appended_field;
+  }
+
   @Override
   public String toInternal(String val) {
     String[] fields = val.split(FIELD_DELIMITER, 2);
@@ -32,11 +48,16 @@ public class CallNumberSortKeyFieldType extends StrField  {
       appended_fields = fields[1];
     }
 
-    LCCallNumberSimple lccns = new LCCallNumberSimple(fields[0]);
+    AnyCallNumber cn = new AnyCallNumber(fields[0]);
+
+    // Valid? Return it
+    if (cn.isValid) return bundled_fields(cn.collation_key(), appended_fields);
+
+    // Not valid, so if we're not passing through, return null.
     if (passThroughInvalid) {
-      return lccns.any_collation_key() + END_OF_CALLNUMBER + FIELD_DELIMITER +  appended_fields;
+      return  bundled_fields(cn.any_collation_key(), appended_fields);
     } else {
-      return lccns.collation_key() + END_OF_CALLNUMBER  + FIELD_DELIMITER +  appended_fields;
+      return null;
     }
   }
 
