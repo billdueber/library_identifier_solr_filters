@@ -1,19 +1,13 @@
 package edu.umich.library.library_identifier.schema;
 
-import com.google.protobuf.Any;
-import edu.umich.library.library_identifier.normalizers.AnyCallNumber;
-import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
+import edu.umich.library.library_identifier.normalizers.AnyCallNumberSimple;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexableField;
-import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.schema.SchemaField;
-import org.apache.solr.schema.StrField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.swing.event.AncestorEvent;
 import java.lang.invoke.MethodHandles;
-import java.util.Map;
 
 
 public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
@@ -31,7 +25,7 @@ public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
     String val = value.toString();
     if (val == null) return null;
 
-    AnyCallNumber cn = new AnyCallNumber(val);
+    AnyCallNumberSimple cn = new AnyCallNumberSimple(val);
 
     if (!passThroughInvalid && !cn.isValid) return null;
 

@@ -1,6 +1,6 @@
 package edu.umich.library.library_identifier.schema;
 
-import edu.umich.library.library_identifier.normalizers.AnyCallNumber;
+import edu.umich.library.library_identifier.normalizers.AnyCallNumberSimple;
 import edu.umich.library.library_identifier.normalizers.DeweySimple;
 import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
 import org.apache.solr.schema.IndexSchema;
@@ -48,7 +48,7 @@ public class CallNumberSortKeyFieldType extends StrField {
       appended_fields = fields[1];
     }
 
-    AnyCallNumber cn = new AnyCallNumber(fields[0]);
+    AnyCallNumberSimple cn = new AnyCallNumberSimple(fields[0]);
 
     // Valid? Return it
     if (cn.isValid) return bundled_fields(cn.collation_key(), appended_fields);

@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.lang.invoke.MethodHandles;
 
-public class AnyCallNumber {
+public class AnyCallNumberSimple {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
@@ -14,7 +14,7 @@ public class AnyCallNumber {
   public Boolean isValid;
   public LCCallNumberSimple lc;
 
-  public AnyCallNumber(String str) {
+  public AnyCallNumberSimple(String str) {
     original = str;
     lc = new LCCallNumberSimple(str);
     valid_key = getValidKey(original);
