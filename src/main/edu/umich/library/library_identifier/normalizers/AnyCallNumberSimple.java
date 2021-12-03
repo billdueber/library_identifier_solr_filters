@@ -35,13 +35,13 @@ public class AnyCallNumberSimple {
   }
 
   /**
-   * The LC code has pretty cood passthrough normalization, so just use it if need be
+   * The LC code has pretty good passthrough normalization, so just use it if need be
    */
   public String any_collation_key() {
     if (isValid) {
       return valid_key;
     } else {
-      return lc.any_collation_key();
+      return lc.invalid_collation_key();
     }
   }
 

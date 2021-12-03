@@ -15,8 +15,11 @@ public class CallNumberSortKeyFieldType extends StrField {
   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
   private Boolean passThroughInvalid = false;
 
+  // Field delimiter sorts last
   private final String FIELD_DELIMITER = "\\|\\|";
-  private final String END_OF_CALLNUMBER = "!!";
+
+  // End of callnumber sorts first (so A1<field delim> sorts before A1 1<field delim>
+  private final String END_OF_CALLNUMBER = "  ";
 
   protected void init(IndexSchema schema, Map<String, String> args) {
     super.init(schema, args);
