@@ -13,7 +13,7 @@ class LCCallNumberSimpleTest {
     void collation_key(String original, String collation) {
         LCCallNumberSimple lccs = new LCCallNumberSimple(original);
         String key = lccs.collation_key();
-        lccs.logger().debug("Checking given " + collation + " against " + key);
+        if (key == null) key = "null";
         assert(key).equals(collation.toString());
     }
 }

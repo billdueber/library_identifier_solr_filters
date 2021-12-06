@@ -1,16 +1,13 @@
 package edu.umich.library.library_identifier.schema;
 
-import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
+import edu.umich.library.library_identifier.normalizers.AnyCallNumberSimple;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexableField;
-import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.schema.SchemaField;
-import org.apache.solr.schema.StrField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Map;
 
 
 public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
@@ -28,9 +25,9 @@ public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
     String val = value.toString();
     if (val == null) return null;
 
-    if (!passThroughInvalid) {
-      if (!(new LCCallNumberSimple(val).isValid)) return null;
-    }
+    AnyCallNumberSimple cn = new AnyCallNumberSimple(val);
+
+    if (!passThroughInvalid && !cn.isValid) return null;
 
     org.apache.lucene.document.FieldType newType = new org.apache.lucene.document.FieldType();
     newType.setTokenized(true);
