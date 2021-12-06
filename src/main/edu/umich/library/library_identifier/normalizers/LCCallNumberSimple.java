@@ -75,7 +75,7 @@ public class LCCallNumberSimple {
     }
   }
 
-  public String fix_spaces(String str) {
+  public String collapse_spaces(String str) {
     return str.trim().replaceAll("\\s+", " ");
   }
 
@@ -86,7 +86,7 @@ public class LCCallNumberSimple {
   public String collation_key() {
     if (isValid) {
       String key = collation_letters() + collation_digits() + collation_decimals() +  collation_rest();
-      return fix_spaces(key);
+      return collapse_spaces(key);
     }
     if (is_acceptable_only_letters_query(original)) {
       return original;
@@ -134,14 +134,27 @@ public class LCCallNumberSimple {
   }
 
   private String cleanup_freetext(String str) {
-    return fix_spaces(
-        str.replaceAll("\\s+\\.(\\p{L})", " $1")
-            .replaceAll("(\\d)\\.(\\d)", "$1AAAAA$2")
-            .replaceAll("\\p{P}", "")
-            .replaceAll("(\\d)AAAAA(\\d)", "$1.$2")
-    );
+    String rv = replace_dot_before_letter_with_space(str);
+    rv = remove_non_decimal_point_punctuation(rv);
+    rv = force_space_between_digit_and_letter(rv);
+    return collapse_spaces(rv);
 
   }
+
+  private String replace_dot_before_letter_with_space(String str) {
+    return str.replaceAll("\\s+\\.(\\p{L})", " $1");
+  }
+
+  private String remove_non_decimal_point_punctuation(String str) {
+    return str.replaceAll("(\\d)\\.(\\d)", "$1AAAAA$2")
+        .replaceAll("\\p{P}", "")
+        .replaceAll("(\\d)AAAAA(\\d)", "$1.$2");
+  }
+
+  private String force_space_between_digit_and_letter(String str) {
+    return str.replaceAll("(\\d)(\\p{L})", "$1 $2");
+  }
+
 }
 
 

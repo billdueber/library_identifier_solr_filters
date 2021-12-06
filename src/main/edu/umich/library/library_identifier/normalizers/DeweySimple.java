@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.lang.invoke.MethodHandles;
-import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,13 +76,13 @@ public class DeweySimple {
     }
     s = ditch_dots_after_letters(s);
     s = trim_punctuation(s);
-    s = fix_spaces(s);
+    s = collapse_spaces(s);
     s = " " + s;
     return s;
   }
 
   public String ditch_dots_after_letters(String str) {
-    return str.replaceAll("(\\p{L})\\.", "$1");
+    return str.replaceAll("(\\p{L})\\.", "$1 ");
   }
 
   // For trimming punctuation
@@ -100,7 +99,7 @@ public class DeweySimple {
     }
   }
 
-  public String fix_spaces(String str) {
+  public String collapse_spaces(String str) {
     return str.trim().replaceAll("\\s+", " ");
   }
 
