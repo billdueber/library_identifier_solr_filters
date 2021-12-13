@@ -36,7 +36,7 @@ public class DeweySimple {
 
   public static Pattern dewey = Pattern.compile(
       "^\\s*(?<digits>\\d{3})" +
-      "(?:\\.?(?<decimals>[\\d/']+))?" +
+      "(?:\\.(?<decimals>[\\d/']+))?" +
       "\\s*(?<rest>.*)$");
 
 

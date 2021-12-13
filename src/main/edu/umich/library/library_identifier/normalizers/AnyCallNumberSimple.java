@@ -8,7 +8,6 @@ public class AnyCallNumberSimple {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-
   public String original;
   public String valid_key;
   public Boolean isValid;
