@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 public class LCCallNumberSimple {
 
-  public String original;
+  public String trimmed_original;
   public String letters = "";
   public String digits = "";
   public String decimals = "";
@@ -41,12 +41,12 @@ public class LCCallNumberSimple {
   // That can be a single letter, any two-letter combination, or a set of three
   // letters starting with "K" (books about legal issues) or "L" (more of the same).
   // @TODO Put a guard around letter-only queries so we only accept them when an argument to the constructor says to.
-  public static Pattern acceptable_only_letters = Pattern.compile("^|[Kk]?\\p{L}{1,2}$");
+  public static Pattern acceptable_only_letters = Pattern.compile("^\\p{L}{1,3}$");
 
 
   public LCCallNumberSimple(String str) {
-    original = trim_punctuation(str.trim()).trim().toLowerCase();
-    Matcher m = lc_start.matcher(original);
+    trimmed_original = trim_punctuation(str.trim()).trim().toLowerCase();
+    Matcher m = lc_start.matcher(trimmed_original);
     if (m.matches()) {
       isValid  = true;
       letters  = m.group("letters");
@@ -54,11 +54,11 @@ public class LCCallNumberSimple {
       decimals = m.group("decimals");
       rest     = m.group("rest");
     } else {
-      LOGGER.debug("LC Callnumber '" + original + "' is invalid.");
+      LOGGER.debug("LC Callnumber '" + trimmed_original + "' is invalid.");
       isValid = false;
     }
-    if (is_acceptable_only_letters_query(original)) {
-      LOGGER.debug("Original '" + original + "'matches one-acceptable_only pattern");
+    if (is_acceptable_only_letters_query(trimmed_original)) {
+      LOGGER.debug("Original '" + trimmed_original + "'matches one-acceptable_only pattern");
     }
   }
 
@@ -88,15 +88,15 @@ public class LCCallNumberSimple {
       String key = collation_letters() + collation_digits() + collation_decimals() +  collation_rest();
       return collapse_spaces(key);
     }
-    if (is_acceptable_only_letters_query(original)) {
-      return original;
+    if (is_acceptable_only_letters_query(trimmed_original)) {
+      return trimmed_original;
     } else {
       return null;
     }
   }
 
   public String invalid_collation_key() {
-    return cleanup_freetext(original);
+    return cleanup_freetext(trimmed_original);
   }
 
   public String any_collation_key() {
@@ -135,10 +135,15 @@ public class LCCallNumberSimple {
 
   private String cleanup_freetext(String str) {
     String rv = replace_dot_before_letter_with_space(str);
+    rv = remove_dots_between_letters(str);
     rv = remove_non_decimal_point_punctuation(rv);
     rv = force_space_between_digit_and_letter(rv);
     return collapse_spaces(rv);
 
+  }
+
+  private String remove_dots_between_letters(String str) {
+    return str.replaceAll("(\\p{L})\\.(\\p{L})", "$1$2");
   }
 
   private String replace_dot_before_letter_with_space(String str) {

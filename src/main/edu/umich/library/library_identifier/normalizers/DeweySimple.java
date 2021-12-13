@@ -28,7 +28,7 @@ public class DeweySimple {
     return LOGGER;
   }
 
-  public String original;
+  public String trimmed_original;
   public String digits = "";
   public String decimals = "";
   public String rest = "";
@@ -36,27 +36,37 @@ public class DeweySimple {
 
   public static Pattern dewey = Pattern.compile(
       "^\\s*(?<digits>\\d{3})" +
-      "(?:\\.(?<decimals>[\\d/']+))?" +
+      "(?:\\.(?<decimals>[\\d/']+))" +
       "\\s*(?<rest>.*)$");
+
+  public static Pattern acceptable_three_digits = Pattern.compile("^\\s*\\d{1,3}\\s*$");
 
 
   public DeweySimple(String str) {
-    String original = trim_punctuation(str.trim().toLowerCase());
-    Matcher m = dewey.matcher(original);
+    trimmed_original = trim_punctuation(str.trim().toLowerCase());
+    Matcher m = dewey.matcher(trimmed_original);
     if (m.matches()) {
       isValid  = true;
       digits   = m.group("digits");
       decimals = fixed_decimals(m.group("decimals"));
       rest     = fixed_rest(m.group("rest"));
     } else {
-      LOGGER.debug("'" + original + "' is not valid Dewey");
+      LOGGER.debug("'" + trimmed_original + "' is not valid Dewey");
       isValid = false;
     }
+
+  }
+
+  public Boolean is_acceptable_three_digits(String str) {
+    return acceptable_three_digits.matcher(str).matches();
   }
 
   public String collation_key() {
     if (isValid) {
       return trim_punctuation(digits + decimals + rest);
+    }
+    if ( is_acceptable_three_digits(trimmed_original)) {
+      return trimmed_original;
     } else {
       return null;
     }
@@ -74,11 +84,16 @@ public class DeweySimple {
     if (s.equals("")) {
       return s;
     }
+    s = remove_dots_between_letters(s);
     s = ditch_dots_after_letters(s);
     s = trim_punctuation(s);
     s = collapse_spaces(s);
     s = " " + s;
     return s;
+  }
+
+  private String remove_dots_between_letters(String str) {
+    return str.replaceAll("(\\p{L})\\.(\\p{L})", "$1$2");
   }
 
   public String ditch_dots_after_letters(String str) {
