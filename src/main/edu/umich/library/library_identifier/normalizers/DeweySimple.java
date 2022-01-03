@@ -21,18 +21,16 @@ import java.util.regex.Pattern;
  *    * add back in with a preceding space
  *
  */
-public class DeweySimple {
+public class DeweySimple extends AbstractCallNumber {
 
-  private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  public Logger logger() {
+  protected static Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+  public static Logger logger() {
     return LOGGER;
   }
 
-  public String trimmed_original;
   public String digits = "";
   public String decimals = "";
   public String rest = "";
-  public Boolean isValid;
 
   public static Pattern dewey = Pattern.compile(
       "^\\s*(?<digits>\\d{3})" +
@@ -49,36 +47,53 @@ public class DeweySimple {
       isValid  = true;
       digits   = m.group("digits");
       decimals = fixed_decimals(m.group("decimals"));
-      rest     = fixed_rest(m.group("rest"));
+      rest     = cleanup_freetext(m.group("rest"));
     } else {
-      LOGGER.debug("'" + trimmed_original + "' is not valid Dewey");
+      logger().debug(trimmed_original + " is invalid");
       isValid = false;
     }
 
   }
 
-  public Boolean is_acceptable_three_digits(String str) {
-    return acceptable_three_digits.matcher(str).matches();
+  public Boolean has_valid_key() {
+    return isValid;
+  }
+  public String valid_key() {
+    return collation_key();
   }
 
   public String collation_key() {
     if (isValid) {
       return trim_punctuation(digits + decimals + rest);
+    } else {
+      return null;
     }
-    if ( is_acceptable_three_digits(trimmed_original)) {
+  }
+
+  public Boolean has_valid_truncated_key() {
+    return is_valid_truncated_query(trimmed_original);
+  }
+
+  public String valid_truncated_key() {
+    if (is_valid_truncated_query(trimmed_original)) {
       return trimmed_original;
     } else {
       return null;
     }
   }
 
-  public String fixed_decimals(String str) {
+  public String invalid_key() {
+    return cleanup_freetext(trimmed_original);
+  }
+
+
+  private String fixed_decimals(String str) {
     if (str == null) return "";
-    if (str.trim() == "") return "";
+    if (str.trim().equals("")) return "";
     return "." + str.trim().replaceAll("[/']+", "");
   }
 
-  public String fixed_rest(String str) {
+  private String cleanup_freetext(String str) {
     if (str == null)  return "";
     String s = str.trim();
     if (s.equals("")) {
@@ -100,22 +115,8 @@ public class DeweySimple {
     return str.replaceAll("(\\p{L})\\.", "$1 ");
   }
 
-  // For trimming punctuation
-  public static Pattern trim_punct = Pattern.compile(
-      "^\\p{Punct}*(.*?)\\p{Punct}*$"
-  );
-
-  public String trim_punctuation(String str) {
-    Matcher m = trim_punct.matcher(str);
-    if (m.matches()) {
-      return m.group(1);
-    } else {
-      return str;
-    }
-  }
-
-  public String collapse_spaces(String str) {
-    return str.trim().replaceAll("\\s+", " ");
+  private Boolean is_valid_truncated_query(String str) {
+    return acceptable_three_digits.matcher(str).matches();
   }
 
 }

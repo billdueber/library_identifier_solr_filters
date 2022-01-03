@@ -35,19 +35,21 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
    * or return nothing (default)
    */
 
-  private Boolean passThroughInvalid;
+  private Boolean passThroughOnError;
+  private Boolean allowTruncated;
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
    *                ISO-639-1 and ISO-639-2 codes
    */
-  public AnyCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughInvalid) {
+  public AnyCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughOnError, Boolean allowTruncated) {
     super(aStream);
-    this.passThroughInvalid = passThroughInvalid;
+    this.passThroughOnError = passThroughOnError;
+    this.allowTruncated     = allowTruncated;
   }
 
   public AnyCallNumberSimpleFilter(TokenStream aStream) {
-    this(aStream, false);
+    this(aStream, false, true);
   }
 
 
@@ -68,13 +70,13 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
       try {
         myTermAttribute.setEmpty();
         AnyCallNumberSimple cn = new AnyCallNumberSimple(t);
-        // Passing through anything? Just get whatever collation key its got
-        if (passThroughInvalid) {
-          myTermAttribute.append(cn.any_collation_key());
-        } else if (cn.isValid) {
-          myTermAttribute.append((cn.collation_key()));
+        String key = cn.best_key(passThroughOnError, allowTruncated);
+
+        // Bug out if we've got nothing.
+        if (key == null) {
+          return false;
         } else {
-          return false; // no passthrough, not valid ==> :-(
+          myTermAttribute.append(key);
         }
       } catch (IllegalArgumentException details) {
         if (LOGGER.isInfoEnabled()) {
@@ -82,7 +84,6 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
         }
       }
     }
-
     return true;
   }
 }

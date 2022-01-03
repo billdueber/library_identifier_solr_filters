@@ -12,7 +12,13 @@ import java.lang.invoke.MethodHandles;
 
 public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  private Boolean passThroughInvalid = false;
+
+  private Boolean has_some_key_at_all(AnyCallNumberSimple cn) {
+    if (cn.has_valid_key()) return true;
+    if (passThroughOnError) return true;
+    if (allowTruncated && cn.has_valid_truncated_key()) return true;
+    return false;
+  }
 
   @Override
   public IndexableField createField(SchemaField field, Object value) {
@@ -27,7 +33,7 @@ public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
 
     AnyCallNumberSimple cn = new AnyCallNumberSimple(val);
 
-    if (!passThroughInvalid && !cn.isValid) return null;
+    if (!has_some_key_at_all(cn)) return null;
 
     org.apache.lucene.document.FieldType newType = new org.apache.lucene.document.FieldType();
     newType.setTokenized(true);

@@ -7,14 +7,12 @@ import java.lang.invoke.MethodHandles;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class LCCallNumberSimple {
+public class LCCallNumberSimple extends AbstractCallNumber {
 
-  public String trimmed_original;
   public String letters = "";
   public String digits = "";
   public String decimals = "";
   public String rest = "";
-  public Boolean isValid;
 
 
   private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
@@ -32,10 +30,6 @@ public class LCCallNumberSimple {
           "(?<rest>.*)$"        // Whatever's left
   );
 
-  // For trimming punctuation
-  public static Pattern trim_punct = Pattern.compile(
-      "^\\p{Punct}*(.*?)\\p{Punct}*$"
-  );
 
   // When searching, we'll often want a range query that starts with only letters
   // That can be a single letter, any two-letter combination, or a set of three
@@ -57,7 +51,7 @@ public class LCCallNumberSimple {
       LOGGER.debug("LC Callnumber '" + trimmed_original + "' is invalid.");
       isValid = false;
     }
-    if (is_acceptable_only_letters_query(trimmed_original)) {
+    if (has_valid_truncated_key()) {
       LOGGER.debug("Original '" + trimmed_original + "'matches one-acceptable_only pattern");
     }
   }
@@ -66,58 +60,49 @@ public class LCCallNumberSimple {
     return LOGGER;
   }
 
-  public String trim_punctuation(String str) {
-    Matcher m = trim_punct.matcher(str);
-    if (m.matches()) {
-      return m.group(1);
-    } else {
-      return str;
-    }
+  public Boolean has_valid_key() {
+    return isValid;
   }
-
-  public String collapse_spaces(String str) {
-    return str.trim().replaceAll("\\s+", " ");
-  }
-
-  public Boolean is_acceptable_only_letters_query(String str) {
-    return acceptable_only_letters.matcher(str).matches();
+  public String valid_key() {
+    return collation_key();
   }
 
   public String collation_key() {
     if (isValid) {
       String key = collation_letters() + collation_digits() + collation_decimals() +  collation_rest();
       return collapse_spaces(key);
+    } else {
+      return null;
     }
-    if (is_acceptable_only_letters_query(trimmed_original)) {
+  }
+
+  public Boolean has_valid_truncated_key() {
+    return is_acceptable_truncated_query(trimmed_original);
+  }
+  public String valid_truncated_key() {
+    if (has_valid_truncated_key()) {
       return trimmed_original;
     } else {
       return null;
     }
   }
 
-  public String invalid_collation_key() {
+  public String invalid_key() {
     return cleanup_freetext(trimmed_original);
   }
 
-  public String any_collation_key() {
-    String c = collation_key();
-    if (c != null) {
-      return collation_key();
-    } else {
-      return invalid_collation_key();
-    }
-  }
 
-  public String collation_letters() {
+
+  private String collation_letters() {
     return letters;
   }
 
-  public String collation_digits() {
+  private String collation_digits() {
     Integer digit_length = digits.length();
     return digit_length + digits;
   }
 
-  public String collation_decimals() {
+  private String collation_decimals() {
     if (decimals == null) {
       return "";
     } else {
@@ -125,7 +110,7 @@ public class LCCallNumberSimple {
     }
   }
 
-  public String collation_rest() {
+  private String collation_rest() {
     if ((rest == null) || (rest.equals(""))) {
       return "";
     } else {
@@ -134,13 +119,25 @@ public class LCCallNumberSimple {
   }
 
   private String cleanup_freetext(String str) {
-    String rv = replace_dot_before_letter_with_space(str);
-    rv = remove_dots_between_letters(str);
+    if (str == null)  return "";
+    String s = str.trim();
+    if (s.equals("")) {
+      return s;
+    }
+    String rv = replace_dot_before_letter_with_space(s);
+    rv = remove_dots_between_letters(rv);
     rv = remove_non_decimal_point_punctuation(rv);
     rv = force_space_between_digit_and_letter(rv);
     return collapse_spaces(rv);
 
   }
+
+
+  private Boolean is_acceptable_truncated_query(String str) {
+    return acceptable_only_letters.matcher(str).matches();
+  }
+
+
 
   private String remove_dots_between_letters(String str) {
     return str.replaceAll("(\\p{L})\\.(\\p{L})", "$1$2");

@@ -17,7 +17,7 @@ import java.lang.invoke.MethodHandles;
  * can be used for left-anchored search if turned into edge-ngrams.
  * <p>
  *
- * <fieldType name="callnumber_sortable" passThroughInvalid="true">
+ * <fieldType name="callnumber_sortable" passThroughOnError="true">
  *
  * </fieldType>
  */
@@ -40,19 +40,21 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
    * or return nothing (default)
    */
 
-  private Boolean passThroughInvalid;
+  private Boolean passThroughOnError;
+  private Boolean allowTruncated;
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
    *                ISO-639-1 and ISO-639-2 codes
    */
-  public LCCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughInvalid) {
+  public LCCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughOnError, Boolean allowTruncated) {
     super(aStream);
-    this.passThroughInvalid = passThroughInvalid;
+    this.passThroughOnError = passThroughOnError;
+    this.allowTruncated     = allowTruncated;
   }
 
   public LCCallNumberSimpleFilter(TokenStream aStream) {
-    this(aStream, false);
+    this(aStream, false, true);
   }
 
 
@@ -73,12 +75,11 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
       try {
         myTermAttribute.setEmpty();
         LCCallNumberSimple lc = new LCCallNumberSimple(t);
-        if (lc.isValid) {
-          myTermAttribute.append(lc.collation_key());
-        } else if (passThroughInvalid) {
-          myTermAttribute.append(lc.invalid_collation_key());
-        } else {
+        String key = lc.best_key(passThroughOnError, allowTruncated);
+        if (key == null) {
           return false;
+        } else {
+          myTermAttribute.append(key);
         }
       } catch (IllegalArgumentException details) {
         if (LOGGER.isInfoEnabled()) {
