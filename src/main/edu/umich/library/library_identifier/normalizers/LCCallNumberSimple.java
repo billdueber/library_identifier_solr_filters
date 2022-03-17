@@ -25,7 +25,7 @@ public class LCCallNumberSimple extends AbstractCallNumber {
   public static Pattern lc_start = Pattern.compile(
 //      "^\\s*(?<letters>[KkLl]?\\p{L}{1,2})[-\\s]*" + // 1-2 (3 in the Ks) initial letters, plus optional whitespace
         "^\\s*" + letter_pat + "\\s*" +
-          "(?<digits>\\d+)" +                  // any number of digits
+          "(?<digits>\\d{1,5}(?!\\d))" +                  // 1-5 digits
           "(?:\\.(?<decimals>\\d+))?" +   // an optional decimal ('.' plus digits)
           "(?<rest>.*)$"        // Whatever's left
   );

@@ -37,7 +37,7 @@ public class DeweySimple extends AbstractCallNumber {
       "(?:\\.(?<decimals>[\\d/']+))" +
       "\\s*(?<rest>.*)$");
 
-  public static Pattern acceptable_three_digits = Pattern.compile("^\\s*\\d{1,3}\\s*$");
+  public static Pattern acceptable_three_digits = Pattern.compile("^\\s*\\d{3}\\s*$");
 
 
   public DeweySimple(String str) {
