@@ -23,7 +23,7 @@ abstract class AbstractCallNumber {
   }
 
   public String best_key(Boolean passThroughOnError, Boolean allowTruncated) {
-    if (has_valid_truncated_key()) return valid_key();
+    if (has_valid_key()) return valid_key();
     if (allowTruncated && has_valid_truncated_key()) return valid_truncated_key();
     if (passThroughOnError) return invalid_key();
     return null;
