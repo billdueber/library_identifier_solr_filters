@@ -6,7 +6,7 @@
 
   <groupId>edu.umich.lib</groupId>
   <artifactId>library_identifier_solr_filters</artifactId>
-  <version>0.9.0</version>
+  <version>0.9.1</version>
 
   <build>
     <finalName>library_identifier_solr_filters-${project.version}-solr${solr.version}</finalName>
