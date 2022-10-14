@@ -15,7 +15,7 @@ public class CallNumberSortKeyFieldType extends StrField {
   protected Boolean allowTruncated = true;
 
   // Field delimiter sorts last
-  private final String FIELD_DELIMITER = "\\|\\|";
+  private final String FIELD_DELIMITER = "\u001F";
 
   // End of callnumber sorts first (so A1<field delim> sorts before A1 1<field delim>
   // Spaces sort nice and early.
