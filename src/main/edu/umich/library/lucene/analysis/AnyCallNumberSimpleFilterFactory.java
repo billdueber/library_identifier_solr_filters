@@ -4,6 +4,9 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
 
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import java.lang.invoke.MethodHandles;
 
 /**
  * @author dueberb
@@ -27,6 +30,8 @@ import java.util.Map;
  * </fieldType>
  */
 public class AnyCallNumberSimpleFilterFactory extends TokenFilterFactory {
+  private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
   private Boolean passThroughOnError;
   private Boolean allowTruncated;
 
@@ -38,6 +43,6 @@ public class AnyCallNumberSimpleFilterFactory extends TokenFilterFactory {
 
   @Override
   public AnyCallNumberSimpleFilter create(TokenStream input) {
-    return new AnyCallNumberSimpleFilter(input, passThroughOnError, allowTruncated);
+    return new AnyCallNumberSimpleFilter(input, this.passThroughOnError, this.allowTruncated);
   }
 }

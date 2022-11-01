@@ -74,6 +74,7 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
 
         // Bug out if we've got nothing.
         if (key == null) {
+          LOGGER.warn("No best key for " + t);
           return false;
         } else {
           myTermAttribute.append(key);
