@@ -14,6 +14,7 @@ class LCCallNumberSimpleTest {
         LCCallNumberSimple lccs = new LCCallNumberSimple(original);
         String key = lccs.collation_key();
         if (key == null) key = "null";
+        String invalid = lccs.invalid_key();
         assert(key).equals(collation.toString());
     }
 }

@@ -32,11 +32,20 @@ public class DeweySimple extends AbstractCallNumber {
   public String decimals = "";
   public String rest = "";
 
+  /** The goal is to accept
+   *   * three digits
+   *   * followed by either decimal places or a space
+   *   * followed by anything (or nothing) else
+   *
+   * The "valid_truncated_key" for a Dewey number is
+   * simply three digits
+   */
   public static Pattern dewey = Pattern.compile(
       "^\\s*(?<digits>\\d{3})" +
-      "(?:\\.(?<decimals>[\\d/']+))" +
+      "(?:(?:\\.(?<decimals>[\\d/']+))|\\s+)" +
       "\\s*(?<rest>.*)$");
 
+    /* We'll also accept just three digits by themselves */
   public static Pattern acceptable_three_digits = Pattern.compile("^\\s*\\d{3}\\s*$");
 
 
@@ -44,7 +53,7 @@ public class DeweySimple extends AbstractCallNumber {
     trimmed_original = trim_punctuation(str.trim().toLowerCase());
     Matcher m = dewey.matcher(trimmed_original);
     if (m.matches()) {
-      isValid  = true;
+      isValid = true;
       digits   = m.group("digits");
       decimals = fixed_decimals(m.group("decimals"));
       rest     = cleanup_freetext(m.group("rest"));
