@@ -1,4 +1,4 @@
-package edu.umich.library.library_identifier.normalizers;
+package edu.umich.lib.library_identifier.callnumber;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +33,9 @@ public class DeweySimple extends AbstractCallNumber {
   public String rest = "";
 
   public static Pattern dewey = Pattern.compile(
-      "^\\s*(?<digits>\\d{3})" +
-      "(?:\\.(?<decimals>[\\d/']+))" +
-      "\\s*(?<rest>.*)$");
+      "^\\s*(?<digits>\\d{3})" + "\\s*" +
+      "(?:\\.(?<decimals>[\\d/']+))?"  +
+      "(?:\\s+(?<rest>.*))?$");
 
   public static Pattern acceptable_three_digits = Pattern.compile("^\\s*\\d{3}\\s*$");
 
@@ -83,7 +83,7 @@ public class DeweySimple extends AbstractCallNumber {
   }
 
   public String invalid_key() {
-    return cleanup_freetext(trimmed_original);
+    return "Dewey invalid " + cleanup_freetext(trimmed_original);
   }
 
 

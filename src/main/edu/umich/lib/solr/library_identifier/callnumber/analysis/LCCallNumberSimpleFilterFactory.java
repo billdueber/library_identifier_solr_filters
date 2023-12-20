@@ -1,6 +1,5 @@
-package edu.umich.library.lucene.analysis;
+package edu.umich.lib.solr.library_identifier.callnumber.analysis;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
 

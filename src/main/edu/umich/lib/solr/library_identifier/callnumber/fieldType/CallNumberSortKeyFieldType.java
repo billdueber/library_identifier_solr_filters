@@ -1,6 +1,6 @@
-package edu.umich.library.library_identifier.schema;
+package edu.umich.lib.solr.library_identifier.callnumber.fieldType;
 
-import edu.umich.library.library_identifier.normalizers.AnyCallNumberSimple;
+import edu.umich.lib.library_identifier.callnumber.AnyCallNumberSimple;
 import org.apache.solr.schema.IndexSchema;
 import org.apache.solr.schema.StrField;
 import org.slf4j.Logger;

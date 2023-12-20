@@ -1,4 +1,6 @@
-package edu.umich.library.library_identifier.normalizers;
+package edu.umich.lib.library_identifier.callnumber;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvFileSource;
@@ -6,11 +8,11 @@ import org.junit.jupiter.params.provider.CsvFileSource;
 class DeweySimpleTest {
 
     @ParameterizedTest
-    @CsvFileSource(files = "src/test/java/edu/umich/library/library_identifier/normalizers/dewey_pairs.tsv", delimiterString = "->")
+    @CsvFileSource(files = "src/test/java/edu/umich/lib/library_identifier/callnumber/dewey_pairs.tsv", delimiterString = "->")
     void collation_key(String original, String collation) {
         DeweySimple dewey = new DeweySimple(original);
         String key = dewey.collation_key();
         if (key == null) key = "null";
-        assert(key).equals(collation.toString());
+        assertEquals(collation.toString(), key);
     }
 }

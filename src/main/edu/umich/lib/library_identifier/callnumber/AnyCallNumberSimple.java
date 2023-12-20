@@ -1,4 +1,4 @@
-package edu.umich.library.library_identifier.normalizers;
+package edu.umich.lib.library_identifier.callnumber;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +25,23 @@ public class AnyCallNumberSimple extends AbstractCallNumber {
   }
 
 
+  @Override
   public Boolean has_valid_key() {
     return isValid;
   }
 
+  @Override
   public String valid_key() {
     return either_valid_key;
   }
 
 
+  @Override
   public Boolean has_valid_truncated_key() {
     return (lc.has_valid_truncated_key() || dewey.has_valid_truncated_key());
   }
 
+  @Override
   public String valid_truncated_key() {
     if (lc.has_valid_truncated_key()) return lc.valid_truncated_key();
     if (dewey.has_valid_truncated_key()) return dewey.valid_truncated_key();
@@ -45,11 +49,13 @@ public class AnyCallNumberSimple extends AbstractCallNumber {
   }
 
 
+  @Override
   public String invalid_key() {
     return lc.invalid_key();
   }
 
 
+  @org.jetbrains.annotations.Nullable
   private String getValidKey(String str) {
     if (lc.isValid) return lc.collation_key();
     if (dewey.isValid) return dewey.collation_key();

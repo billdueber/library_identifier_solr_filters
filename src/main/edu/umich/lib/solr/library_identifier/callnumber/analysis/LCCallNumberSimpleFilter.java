@@ -1,4 +1,4 @@
-package edu.umich.library.lucene.analysis;
+package edu.umich.lib.solr.library_identifier.callnumber.analysis;
 
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -6,7 +6,7 @@ import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import edu.umich.library.library_identifier.normalizers.LCCallNumberSimple;
+import edu.umich.lib.library_identifier.callnumber.LCCallNumberSimple;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;

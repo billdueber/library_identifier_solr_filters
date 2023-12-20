@@ -1,6 +1,6 @@
-package edu.umich.library.lucene.analysis;
+package edu.umich.lib.solr.library_identifier.callnumber.analysis;
 
-import edu.umich.library.library_identifier.normalizers.AnyCallNumberSimple;
+import edu.umich.lib.library_identifier.callnumber.AnyCallNumberSimple;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;

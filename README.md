@@ -1,5 +1,8 @@
 # library_identifer_solr_filters
 
+**Note**: This README is out of date, and doesn't reflect the Dewey stuff or the ISBN/LCCN code
+
+
 ## Overview
 
 This is a series of simple solr analysis-chain filters useful to those
@@ -78,12 +81,12 @@ A good fieldType definition for prefix searches is as follows:
 <fieldType name="callnumber_prefix_search"  class="solr.TextField">
   <analyzer type="index">
     <tokenizer class="solr.KeywordTokenizerFactory"/>
-    <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
+    <filter class="edu.umich.lib.solr.library_identifier.callnumber.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
     <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
   </analyzer>
   <analyzer type="query">
     <tokenizer class="solr.KeywordTokenizerFactory"/>
-    <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
+    <filter class="edu.umich.lib.solr.library_identifier.callnumber.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
   </analyzer>
 </fieldType>
 ```
@@ -108,8 +111,7 @@ chain (being based on String and not TextField), hence the filter, above.
 
 ```xml
 
-<fieldType name="callnumber_sortable" class="edu.umich.library.
-library_identifier.schema.CallnumberSortableFieldType" />
+<fieldType name="callnumber_sortable" class="edu.umich.lib.solr.library_identifier.callnumber.fieldType.CallnumberSortableFieldType" />
 
 
 <field name="callnumber_search" type="callnumber_sortable"

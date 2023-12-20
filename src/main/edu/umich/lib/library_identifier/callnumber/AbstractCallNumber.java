@@ -1,10 +1,11 @@
-package edu.umich.library.library_identifier.normalizers;
+package edu.umich.lib.library_identifier.callnumber;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 abstract class AbstractCallNumber {
 
+  public String original;
   public String trimmed_original;
   public Boolean isValid;
 

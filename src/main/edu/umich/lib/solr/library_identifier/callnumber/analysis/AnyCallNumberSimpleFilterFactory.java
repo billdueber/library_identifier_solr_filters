@@ -1,4 +1,4 @@
-package edu.umich.library.lucene.analysis;
+package edu.umich.lib.solr.library_identifier.callnumber.analysis;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
