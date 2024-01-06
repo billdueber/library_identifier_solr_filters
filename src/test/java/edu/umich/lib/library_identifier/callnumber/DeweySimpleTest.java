@@ -11,7 +11,7 @@ class DeweySimpleTest {
     @CsvFileSource(files = "src/test/java/edu/umich/lib/library_identifier/callnumber/dewey_pairs.tsv", delimiterString = "->")
     void collation_key(String original, String collation) {
         DeweySimple dewey = new DeweySimple(original);
-        String key = dewey.collation_key();
+        String key = dewey.collationKey();
         if (key == null) key = "null";
         assertEquals(collation.toString(), key);
     }

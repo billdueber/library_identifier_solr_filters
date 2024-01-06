@@ -32,91 +32,97 @@ public class DeweySimple extends AbstractCallNumber {
   public String decimals = "";
   public String rest = "";
 
-  public static Pattern dewey = Pattern.compile(
+  public static Pattern deweyPattern = Pattern.compile(
       "^\\s*(?<digits>\\d{3})" + "\\s*" +
       "(?:\\.(?<decimals>[\\d/']+))?"  +
       "(?:\\s+(?<rest>.*))?$");
 
-  public static Pattern acceptable_three_digits = Pattern.compile("^\\s*\\d{3}\\s*$");
+  public static Pattern acceptableThreeDigitsPattern = Pattern.compile("^\\s*\\d{3}\\s*$");
 
 
   public DeweySimple(String str) {
-    trimmed_original = trim_punctuation(str.trim().toLowerCase());
-    Matcher m = dewey.matcher(trimmed_original);
+    trimmedOriginal = trimPunctuation(str.trim().toLowerCase());
+    Matcher m = deweyPattern.matcher(trimmedOriginal);
     if (m.matches()) {
       isValid  = true;
       digits   = m.group("digits");
-      decimals = fixed_decimals(m.group("decimals"));
-      rest     = cleanup_freetext(m.group("rest"));
+      decimals = fixedDecimals(m.group("decimals"));
+      rest     = cleanupFreetext(m.group("rest"));
     } else {
-      logger().debug(trimmed_original + " is invalid");
+      logger().debug(trimmedOriginal + " is invalid");
       isValid = false;
     }
 
   }
 
-  public Boolean has_valid_key() {
+  @Override
+  public Boolean hasValidKey() {
     return isValid;
   }
-  public String valid_key() {
-    return collation_key();
+  @Override
+  public String validKey() {
+    return collationKey();
   }
 
-  public String collation_key() {
+  @org.jetbrains.annotations.Nullable
+  public String collationKey() {
     if (isValid) {
-      return trim_punctuation(digits + decimals + rest);
+      return trimPunctuation(digits + decimals + rest);
     } else {
       return null;
     }
   }
 
-  public Boolean has_valid_truncated_key() {
-    return is_valid_truncated_query(trimmed_original);
+  @Override
+  public Boolean hasAcceptableTruncatedKey() {
+    return isValidTruncatedQuery(trimmedOriginal);
   }
 
-  public String valid_truncated_key() {
-    if (is_valid_truncated_query(trimmed_original)) {
-      return trimmed_original;
+  @Override
+  public String acceptableTruncatedKey() {
+    if (isValidTruncatedQuery(trimmedOriginal)) {
+      return trimmedOriginal;
     } else {
       return null;
     }
   }
 
-  public String invalid_key() {
-    return "Dewey invalid " + cleanup_freetext(trimmed_original);
+  @Override
+  public String invalidKey() {
+    return cleanupFreetext(trimmedOriginal);
   }
 
 
-  private String fixed_decimals(String str) {
+  private String fixedDecimals(String str) {
     if (str == null) return "";
     if (str.trim().equals("")) return "";
     return "." + str.trim().replaceAll("[/']+", "");
   }
 
-  private String cleanup_freetext(String str) {
+  private String cleanupFreetext(String str) {
     if (str == null)  return "";
     String s = str.trim();
     if (s.equals("")) {
       return s;
     }
-    s = remove_dots_between_letters(s);
-    s = ditch_dots_after_letters(s);
-    s = trim_punctuation(s);
-    s = collapse_spaces(s);
+    s = removeDotsBetweenLetters(s);
+    s = ditchDotsAfterLetters(s);
+    s = trimPunctuation(s);
+    s = collapseSpaces(s);
     s = " " + s;
     return s;
   }
 
-  private String remove_dots_between_letters(String str) {
+  private String removeDotsBetweenLetters(String str) {
     return str.replaceAll("(\\p{L})\\.(\\p{L})", "$1$2");
   }
 
-  public String ditch_dots_after_letters(String str) {
+  public String ditchDotsAfterLetters(String str) {
     return str.replaceAll("(\\p{L})\\.", "$1 ");
   }
 
-  private Boolean is_valid_truncated_query(String str) {
-    return acceptable_three_digits.matcher(str).matches();
+  private Boolean isValidTruncatedQuery(String str) {
+    return acceptableThreeDigitsPattern.matcher(str).matches();
   }
 
 }

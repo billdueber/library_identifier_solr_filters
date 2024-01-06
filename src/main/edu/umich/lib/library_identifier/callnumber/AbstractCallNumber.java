@@ -3,61 +3,120 @@ package edu.umich.lib.library_identifier.callnumber;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Create a "callnumber key" suitable for sorting/searching within solr.
+ * <p>
+ * Provides tests to see if the given callnumber is considered valid in the
+ * implementing schema, and allows for truncated values (which aren't valid
+ * but still can be useful, esp. for range queries) creating "invalid" keys,
+ * which produce a potentially-useful key despite the fact that the
+ * underlying callnumber isn't valid as defined by the implementation.
+ *
+ * @author Bill Dueber
+ */
 abstract class AbstractCallNumber {
 
-  public String original;
-  public String trimmed_original;
-  public Boolean isValid;
+    /**
+     * The passed in string, unmodified
+     */
+    public String original;
+    /**
+     * The original string with schema-aware non-semantic leading/trailing characters
+     * (e.g., spaces) removed
+     */
+    public String trimmedOriginal;
 
-  abstract Boolean has_valid_key();
-  abstract String valid_key();
+    /**
+     * Whether this callnumber is considered valid in the implementing scheme
+     */
+    public Boolean isValid;
 
-  abstract Boolean has_valid_truncated_key();
-  abstract String valid_truncated_key();
+    /**
+     * @return Whether we can construct a valid key, based on the implementing schema
+     */
+    abstract Boolean hasValidKey();
 
-  abstract String invalid_key();
+    /**
+     * Computes a valid key
+     *
+     * @return
+     */
+    @org.jetbrains.annotations.Nullable
+    abstract String validKey();
 
-  public String any_valid_key() {
-    if (has_valid_key()) return valid_key();
-    if (has_valid_truncated_key()) return valid_truncated_key();
-    return null;
-  }
+    /**
+     * @see #acceptableTruncatedKey()
+     */
+    abstract Boolean hasAcceptableTruncatedKey();
 
-  public String best_key(Boolean passThroughOnError, Boolean allowTruncated) {
-    if (has_valid_key()) return valid_key();
-    if (allowTruncated && has_valid_truncated_key()) return valid_truncated_key();
-    if (passThroughOnError) return invalid_key();
-    return null;
-  }
+    /**
+     * Some schemes have "truncated" versions that can be useful for sorting/searching
+     * (e.g., an LC call number requires both an alphabetic and numeric portion, but
+     * it can be useful to accept just the alphabetic portion.
+     *
+     * @return
+     */
+    @org.jetbrains.annotations.Nullable
+    abstract String acceptableTruncatedKey();
 
-  public String any_key() {
-    String k = any_valid_key();
-    if (k == null ) {
-      return invalid_key();
-    } else {
-      return k;
+    /**
+     * @return The "invalid" key -- a transformed version of the input string
+     */
+    @org.jetbrains.annotations.Nullable
+    abstract String invalidKey();
+
+    /**
+     * @return The valid key, acceptable truncated key, or null
+     */
+    @org.jetbrains.annotations.Nullable
+    public String anyAcceptableKey() {
+        if (hasValidKey()) return validKey();
+        if (hasAcceptableTruncatedKey()) return acceptableTruncatedKey();
+        return null;
     }
-  }
 
-  // For trimming punctuation
-  public static Pattern trim_punct = Pattern.compile(
-      "^\\p{Punct}*(.*?)\\p{Punct}*$"
-  );
-
-  public String trim_punctuation(String str) {
-    Matcher m = trim_punct.matcher(str);
-    if (m.matches()) {
-      return m.group(1);
-    } else {
-      return str;
+    public String bestKey() {
+        return bestKey(true, true);
     }
-  }
-
-  public String collapse_spaces(String str) {
-    return str.trim().replaceAll("\\s+", " ");
-  }
 
 
+    @org.jetbrains.annotations.Nullable
+    public String bestKey(Boolean allowTruncated, Boolean passThroughOnError) {
+        if (hasValidKey()) return validKey();
+        if (allowTruncated && hasAcceptableTruncatedKey()) return acceptableTruncatedKey();
+        if (passThroughOnError) return invalidKey();
+        return null;
+    }
+
+    /**
+     * @return The valid/truncated key if available; otherwise the processed "invalid" key
+     */
+    public String anyKey() {
+        String k = anyAcceptableKey();
+        if (k == null) {
+            return invalidKey();
+        } else {
+            return k;
+        }
+    }
+
+    // For trimming punctuation
+    public static Pattern trimPunct = Pattern.compile(
+            "^\\p{Punct}*(.*?)\\p{Punct}*$"
+    );
+
+    public String trimPunctuation(String str) {
+        Matcher m = trimPunct.matcher(str);
+        if (m.matches()) {
+            return m.group(1);
+        } else {
+            return str;
+        }
+    }
+
+    public String collapseSpaces(String str) {
+        return str.trim().replaceAll("\\s+", " ");
+    }
 
 
 }

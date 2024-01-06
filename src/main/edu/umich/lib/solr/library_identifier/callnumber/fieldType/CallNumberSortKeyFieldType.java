@@ -45,12 +45,12 @@ public class CallNumberSortKeyFieldType extends StrField {
     AnyCallNumberSimple cn = new AnyCallNumberSimple(fields[0]);
 
     // Valid? Return it
-    if (cn.has_valid_key()) return bundled_fields(cn.valid_key(), appended_fields);
-    if (allowTruncated && cn.has_valid_truncated_key()) return bundled_fields(cn.valid_truncated_key(), appended_fields);
+    if (cn.hasValidKey()) return bundled_fields(cn.validKey(), appended_fields);
+    if (allowTruncated && cn.hasAcceptableTruncatedKey()) return bundled_fields(cn.acceptableTruncatedKey(), appended_fields);
 
     // Not valid at all, so if we're not passing through, return null.
     if (passThroughOnError) {
-      return  bundled_fields(cn.invalid_key(), appended_fields);
+      return  bundled_fields(cn.invalidKey(), appended_fields);
     } else {
       return null;
     }

@@ -70,7 +70,7 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
       try {
         myTermAttribute.setEmpty();
         AnyCallNumberSimple cn = new AnyCallNumberSimple(t);
-        String key = cn.best_key(passThroughOnError, allowTruncated);
+        String key = cn.bestKey(passThroughOnError, allowTruncated);
 
         // Bug out if we've got nothing.
         if (key == null) {

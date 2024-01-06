@@ -12,7 +12,7 @@ class AnyCallNumberSimpleTest {
     @CsvFileSource(files = "src/test/java/edu/umich/lib/library_identifier/callnumber/any_valid_key_pairs.tsv", delimiterString = "->")
     void any_valid_key(String original, String collated)  {
         AnyCallNumberSimple acn = new AnyCallNumberSimple(original);
-        String computed = acn.any_valid_key();
+        String computed = acn.anyAcceptableKey();
         if (computed == null) computed = "null";
         assertEquals(collated.toString(), computed);
     }

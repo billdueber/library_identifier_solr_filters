@@ -75,7 +75,7 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
       try {
         myTermAttribute.setEmpty();
         LCCallNumberSimple lc = new LCCallNumberSimple(t);
-        String key = lc.best_key(passThroughOnError, allowTruncated);
+        String key = lc.bestKey(passThroughOnError, allowTruncated);
         if (key == null) {
           return false;
         } else {

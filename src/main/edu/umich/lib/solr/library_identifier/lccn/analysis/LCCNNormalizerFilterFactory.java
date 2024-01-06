@@ -1,4 +1,4 @@
-package edu.umich.lib.solr.library_identifier.LCCN.analysis;
+package edu.umich.lib.solr.library_identifier.lccn.analysis;
 
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.util.TokenFilterFactory;

@@ -1,4 +1,4 @@
-package edu.umich.lib.library_identifier.LCCN;
+package edu.umich.lib.library_identifier.lccn;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,6 +12,9 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 
+/**
+ * @author Bill Dueber dueberb@umich.edu
+ */
 public class LCCNNormalizer {
 
     // Normalization patterns from http://www.loc.gov/marc/lccn-namespace.html#syntax

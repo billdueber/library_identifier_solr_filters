@@ -1,4 +1,4 @@
-package edu.umich.lib.library_identifier.ISBN;
+package edu.umich.lib.library_identifier.isbn;
 
 
 import java.util.regex.Matcher;
@@ -6,21 +6,16 @@ import java.util.regex.Pattern;
 
 
 /**
- * Created with IntelliJ IDEA.
- * User: dueberb
- * Date: 1/30/15
- * Time: 10:30 AM
- * To change this template use File | Settings | File Templates.
+ * @author Bill Dueber dueberb@umich.edu
  */
-
 public class ISBNNormalizer {
 
     private static String ISBNDelimiterPattern = "\\-";
 
-    public static final Pattern ISBN10Pat =
+    public static final Pattern ISBN10Pattern =
             Pattern.compile("^.*?(\\d[\\d\\-]{8,}[Xx]?)(?:\\D|\\Z).*$");
 
-    public static final Pattern ISBN13Pat =
+    public static final Pattern ISBN13Pattern =
             Pattern.compile("^.*?(97[89][\\d\\-]{10,})(?:\\D|\\Z).*$");
 
 
@@ -35,9 +30,9 @@ public class ISBNNormalizer {
     public static String normalize(String isbnstring) throws IllegalArgumentException {
         // First look for a 13,then a 10
         try {
-            return extract_isbn13(isbnstring);
+            return extractIsbn13(isbnstring);
         } catch (IllegalArgumentException e) {
-            return isbn10_to_13(extract_isbn10(isbnstring));
+            return isbn10To13(extractIsbn10(isbnstring));
         }
     }
 
@@ -49,7 +44,7 @@ public class ISBNNormalizer {
      * @throws IllegalArgumentException if an ISBN isn't found
      */
 
-    public static String extract_isbn_by_pat(String isbnstring, Pattern pat, Integer len) throws IllegalArgumentException {
+    public static String extractIsbnByPat(String isbnstring, Pattern pat, Integer len) throws IllegalArgumentException {
         Matcher m = pat.matcher(isbnstring);
         if (!m.matches()) {
             throw new IllegalArgumentException(isbnstring + " doesn't contain an ISBN" + len.toString());
@@ -65,12 +60,12 @@ public class ISBNNormalizer {
 
     }
 
-    public static String extract_isbn10(String isbnstring) throws IllegalArgumentException {
-        return extract_isbn_by_pat(isbnstring, ISBN10Pat, 10);
+    public static String extractIsbn10(String isbnstring) throws IllegalArgumentException {
+        return extractIsbnByPat(isbnstring, ISBN10Pattern, 10);
     }
 
-    public static String extract_isbn13(String isbnstring) throws IllegalArgumentException {
-        return extract_isbn_by_pat(isbnstring, ISBN13Pat, 13);
+    public static String extractIsbn13(String isbnstring) throws IllegalArgumentException {
+        return extractIsbnByPat(isbnstring, ISBN13Pattern, 13);
     }
 
     /**
@@ -80,7 +75,7 @@ public class ISBNNormalizer {
      * @return the equivalent ISBN13
      */
 
-    public static String isbn10_to_13(String isbn10) {
+    public static String isbn10To13(String isbn10) {
         String longisbn = "978" + isbn10.substring(0, 9);
 
 

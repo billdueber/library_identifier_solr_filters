@@ -14,9 +14,9 @@ public class CallnumberSortableFieldType extends CallNumberSortKeyFieldType {
   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
   private Boolean has_some_key_at_all(AnyCallNumberSimple cn) {
-    if (cn.has_valid_key()) return true;
+    if (cn.hasValidKey()) return true;
     if (passThroughOnError) return true;
-    if (allowTruncated && cn.has_valid_truncated_key()) return true;
+    if (allowTruncated && cn.hasAcceptableTruncatedKey()) return true;
     return false;
   }
 

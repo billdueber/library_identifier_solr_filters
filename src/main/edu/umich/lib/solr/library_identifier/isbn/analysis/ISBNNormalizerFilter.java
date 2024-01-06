@@ -1,6 +1,6 @@
-package edu.umich.lib.solr.library_identifier.LCCN.analysis;
+package edu.umich.lib.solr.library_identifier.isbn.analysis;
 
-import edu.umich.lib.library_identifier.LCCN.LCCNNormalizer;
+import edu.umich.lib.library_identifier.isbn.ISBNNormalizer;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -13,20 +13,21 @@ import java.io.IOException;
  * Created with IntelliJ IDEA.
  * User: dueberb
  * Date: 1/30/15
- * Time: 10:11 AM
+ * Time: 3:14 PM
  * To change this template use File | Settings | File Templates.
  */
-
-public final class LCCNNormalizerFilter extends TokenFilter {
+public class ISBNNormalizerFilter extends TokenFilter {
     /**
      * Logger used to log warnings.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(LCCNNormalizerFilter.class);
+    private static final Logger LOGGER = LoggerFactory
+            .getLogger(ISBNNormalizerFilter.class);
 
     /**
      * The filter term that is a result of the conversion.
      */
-    private final CharTermAttribute myTermAttribute = addAttribute(CharTermAttribute.class);
+    private final CharTermAttribute myTermAttribute =
+            addAttribute(CharTermAttribute.class);
 
     /**
      * A Solr filter that parses ISO-639-1 and ISO-639-2 codes into English text
@@ -35,7 +36,7 @@ public final class LCCNNormalizerFilter extends TokenFilter {
      * @param aStream A {@link TokenStream} that parses streams with
      *                ISO-639-1 and ISO-639-2 codes
      */
-    public LCCNNormalizerFilter(TokenStream aStream) {
+    public ISBNNormalizerFilter(TokenStream aStream) {
         super(aStream);
     }
 
@@ -43,7 +44,7 @@ public final class LCCNNormalizerFilter extends TokenFilter {
      * Increments and processes tokens in the ISO-639 code stream.
      *
      * @return True if a value is still available for processing in the token
-     * stream; otherwise, false
+     *         stream; otherwise, false
      */
     @Override
     public boolean incrementToken() throws IOException {
@@ -55,10 +56,11 @@ public final class LCCNNormalizerFilter extends TokenFilter {
 
         if (t != null && t.length() != 0) {
             try {
-                myTermAttribute.setEmpty().append(LCCNNormalizer.normalize(t));
+//                String normalized = ISBNNormalizer.normalize(t);
+                myTermAttribute.setEmpty().append(ISBNNormalizer.normalize(t));
             } catch (IllegalArgumentException details) {
-                if (LOGGER.isWarnEnabled()) {
-                    LOGGER.warn(details.getMessage(), details);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug(details.getMessage(), details);
                 }
             }
         }

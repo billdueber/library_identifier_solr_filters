@@ -41,8 +41,8 @@ public class LCCallNumberSimple extends AbstractCallNumber {
 
     public LCCallNumberSimple(String str) {
         original = str;
-        trimmed_original = trim_punctuation(str.trim()).trim().toLowerCase();
-        Matcher m = lc_start.matcher(trimmed_original);
+        trimmedOriginal = trimPunctuation(str.trim()).trim().toLowerCase();
+        Matcher m = lc_start.matcher(trimmedOriginal);
         if (m.matches()) {
             isValid = true;
             letters = m.group("letters");
@@ -50,11 +50,11 @@ public class LCCallNumberSimple extends AbstractCallNumber {
             decimals = m.group("decimals");
             rest = m.group("rest");
         } else {
-            LOGGER.debug("LC Callnumber '" + trimmed_original + "' is invalid.");
+            LOGGER.debug("LC Callnumber '" + trimmedOriginal + "' is invalid.");
             isValid = false;
         }
-        if (has_valid_truncated_key()) {
-            LOGGER.debug("Original '" + trimmed_original + "'matches one-acceptable_only pattern");
+        if (hasAcceptableTruncatedKey()) {
+            LOGGER.debug("Original '" + trimmedOriginal + "'matches one-acceptable_only pattern");
         }
     }
 
@@ -62,50 +62,56 @@ public class LCCallNumberSimple extends AbstractCallNumber {
         return LOGGER;
     }
 
-    public Boolean has_valid_key() {
+    @Override
+    public Boolean hasValidKey() {
         return isValid;
     }
 
-    public String valid_key() {
-        return collation_key();
+    @Override
+    public String validKey() {
+        return collationKey();
     }
 
-    public String collation_key() {
+    @org.jetbrains.annotations.Nullable
+    public String collationKey() {
         if (isValid) {
-            String key = collation_letters() + collation_digits() + collation_decimals() + collation_rest();
-            return collapse_spaces(key);
+            String key = collationLetters() + collationDigits() + collationDecimals() + collationRest();
+            return collapseSpaces(key);
         } else {
             return null;
         }
     }
 
-    public Boolean has_valid_truncated_key() {
-        return is_acceptable_truncated_query(original);
+    @Override
+    public Boolean hasAcceptableTruncatedKey() {
+        return isAcceptableTruncatedCallnumber(original);
     }
 
-    public String valid_truncated_key() {
-        if (has_valid_truncated_key()) {
-            return trimmed_original;
+    @Override
+    public String acceptableTruncatedKey() {
+        if (hasAcceptableTruncatedKey()) {
+            return trimmedOriginal;
         } else {
             return null;
         }
     }
 
-    public String invalid_key() {
-        return cleanup_freetext(trimmed_original);
+    @Override
+    public String invalidKey() {
+        return cleanupFreetext(trimmedOriginal);
     }
 
 
-    private String collation_letters() {
+    private String collationLetters() {
         return letters;
     }
 
-    private String collation_digits() {
+    private String collationDigits() {
         Integer digit_length = digits.length();
         return digit_length + digits;
     }
 
-    private String collation_decimals() {
+    private String collationDecimals() {
         if (decimals == null) {
             return "";
         } else {
@@ -113,49 +119,48 @@ public class LCCallNumberSimple extends AbstractCallNumber {
         }
     }
 
-    private String collation_rest() {
+    private String collationRest() {
         if ((rest == null) || (rest.equals(""))) {
             return "";
         } else {
-            return " " + cleanup_freetext(rest);
+            return " " + cleanupFreetext(rest);
         }
     }
 
-    private String cleanup_freetext(String str) {
+    private String cleanupFreetext(String str) {
         if (str == null) return "";
         String s = str.trim();
         if (s.equals("")) {
             return s;
         }
-        String rv = replace_dot_before_letter_with_space(s);
-        rv = remove_dots_between_letters(rv);
-        rv = remove_non_decimal_point_punctuation(rv);
-        rv = force_space_between_digit_and_letter(rv);
-        return collapse_spaces(rv);
-
+        String rv = replaceDotBeforeLetterWithSpace(s);
+        rv = removeDotsBetweenLetters(rv);
+        rv = removeNonDecimalPointPunctuation(rv);
+        rv = forceSpaceBetweenDigitAndLetter(rv);
+        return collapseSpaces(rv);
     }
 
 
-    private Boolean is_acceptable_truncated_query(String str) {
+    private Boolean isAcceptableTruncatedCallnumber(String str) {
         return acceptable_only_letters.matcher(str.trim().toLowerCase()).matches();
     }
 
 
-    private String remove_dots_between_letters(String str) {
+    private String removeDotsBetweenLetters(String str) {
         return str.replaceAll("(\\p{L})\\.(\\p{L})", "$1$2");
     }
 
-    private String replace_dot_before_letter_with_space(String str) {
+    private String replaceDotBeforeLetterWithSpace(String str) {
         return str.replaceAll("\\s+\\.(\\p{L})", " $1");
     }
 
-    private String remove_non_decimal_point_punctuation(String str) {
+    private String removeNonDecimalPointPunctuation(String str) {
         return str.replaceAll("(\\d)\\.(\\d)", "$1AAAAA$2")
                 .replaceAll("\\p{P}", "")
                 .replaceAll("(\\d)AAAAA(\\d)", "$1.$2");
     }
 
-    private String force_space_between_digit_and_letter(String str) {
+    private String forceSpaceBetweenDigitAndLetter(String str) {
         return str.replaceAll("(\\d)(\\p{L})", "$1 $2");
     }
 
