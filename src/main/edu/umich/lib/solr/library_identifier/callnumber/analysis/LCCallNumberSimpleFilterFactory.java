@@ -15,30 +15,30 @@ import java.util.Map;
  * <p>
  *
  * <fieldType name="callnumber_prefix_search"  class="solr.TextField">
- *   <analyzer type="index">
- *     <tokenizer class="solr.KeywordTokenizerFactory"/>
- *     <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
- *     <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
- *   </analyzer>
- *   <analyzer type="query">
- *     <tokenizer class="solr.KeywordTokenizerFactory"/>
- *     <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
- *   </analyzer>
+ * <analyzer type="index">
+ * <tokenizer class="solr.KeywordTokenizerFactory"/>
+ * <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
+ * <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
+ * </analyzer>
+ * <analyzer type="query">
+ * <tokenizer class="solr.KeywordTokenizerFactory"/>
+ * <filter class="edu.umich.library.lucene.analysis.LCCallNumberSimpleFilterFactory" passThroughOnError="true"/>
+ * </analyzer>
  * </fieldType>
  */
 public class LCCallNumberSimpleFilterFactory extends TokenFilterFactory {
-  private Boolean passThroughOnError;
-  private Boolean allowTruncated;
+    private Boolean allowTruncated;
+    private Boolean passThroughOnError;
 
-  public LCCallNumberSimpleFilterFactory(Map<String, String> args) {
-    super(args);
-    passThroughOnError = getBoolean(args, "passThroughOnError", false);
-    allowTruncated = getBoolean(args, "allowTruncated", true);
+    public LCCallNumberSimpleFilterFactory(Map<String, String> args) {
+        super(args);
+        allowTruncated = getBoolean(args, "allowTruncated", true);
+        passThroughOnError = getBoolean(args, "passThroughOnError", false);
 
-  }
+    }
 
-  @Override
-  public LCCallNumberSimpleFilter create(TokenStream input) {
-    return new LCCallNumberSimpleFilter(input, passThroughOnError, allowTruncated);
-  }
+    @Override
+    public LCCallNumberSimpleFilter create(TokenStream input) {
+        return new LCCallNumberSimpleFilter(input, allowTruncated, passThroughOnError);
+    }
 }

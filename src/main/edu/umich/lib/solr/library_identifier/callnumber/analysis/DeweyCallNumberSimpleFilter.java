@@ -1,6 +1,7 @@
 package edu.umich.lib.solr.library_identifier.callnumber.analysis;
 
-import edu.umich.lib.library_identifier.callnumber.AnyCallNumberSimple;
+import edu.umich.lib.library_identifier.callnumber.DeweySimple;
+import edu.umich.lib.library_identifier.callnumber.LCCallNumberSimple;
 import org.apache.lucene.analysis.TokenFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
@@ -11,13 +12,12 @@ import java.io.IOException;
 import java.lang.invoke.MethodHandles;
 
 /**
- * A Solr filter that take an LC/Dewey Call Number (/ shelf key) and
+ * A Solr filter that take a Dewey Call Number (/ shelf key) and
  * turns it into something that can be sorted correctly _and_
  * can be used for left-anchored search if turned into edge-ngrams.
- * <p>
  */
 
-public final class AnyCallNumberSimpleFilter extends TokenFilter {
+public final class DeweyCallNumberSimpleFilter extends TokenFilter {
   /**
    * Logger used to log info/warnings.
    */
@@ -35,22 +35,20 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
    * or return nothing (default)
    */
 
-  private Boolean allowTruncated;
   private Boolean passThroughOnError;
-
+  private Boolean allowTruncated;
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
    *                ISO-639-1 and ISO-639-2 codes
    */
-  public AnyCallNumberSimpleFilter(TokenStream aStream, Boolean allowTruncated, Boolean passThroughOnError) {
+  public DeweyCallNumberSimpleFilter(TokenStream aStream, Boolean allowTruncated, Boolean passThroughOnError) {
     super(aStream);
     this.allowTruncated     = allowTruncated;
     this.passThroughOnError = passThroughOnError;
-
   }
 
-  public AnyCallNumberSimpleFilter(TokenStream aStream) {
+  public DeweyCallNumberSimpleFilter(TokenStream aStream) {
     this(aStream, false, true);
   }
 
@@ -71,12 +69,9 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
     if (t != null && t.length() != 0) {
       try {
         myTermAttribute.setEmpty();
-        AnyCallNumberSimple cn = new AnyCallNumberSimple(t);
-        String key = cn.bestKey(allowTruncated, passThroughOnError);
-
-        // Bug out if we've got nothing.
+        DeweySimple dewey = new DeweySimple(t);
+        String key = dewey.bestKey(allowTruncated, passThroughOnError);
         if (key == null) {
-          LOGGER.warn("No best key for " + t);
           return false;
         } else {
           myTermAttribute.append(key);
@@ -87,6 +82,7 @@ public final class AnyCallNumberSimpleFilter extends TokenFilter {
         }
       }
     }
+
     return true;
   }
 }

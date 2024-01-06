@@ -4,8 +4,10 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.util.TokenFilterFactory;
 
 import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import java.lang.invoke.MethodHandles;
 
 /**
@@ -18,31 +20,32 @@ import java.lang.invoke.MethodHandles;
  * <p>
  *
  * <fieldType name="callnumber_prefix_search"  class="solr.TextField">
- *   <analyzer type="index">
- *     <tokenizer class="solr.KeywordTokenizerFactory"/>
- *     <filter class="edu.umich.library.lucene.analysis.AnyCallNumberSimpleFilterFactory" passThroughOnError="true"/>
- *     <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
- *   </analyzer>
- *   <analyzer type="query">
- *     <tokenizer class="solr.KeywordTokenizerFactory"/>
- *     <filter class="edu.umich.library.lucene.analysis.AnyCallNumberSimpleFilterFactory" passThroughOnError="true"/>
- *   </analyzer>
+ * <analyzer type="index">
+ * <tokenizer class="solr.KeywordTokenizerFactory"/>
+ * <filter class="edu.umich.library.lucene.analysis.AnyCallNumberSimpleFilterFactory" passThroughOnError="true"/>
+ * <filter class="solr.EdgeNGramFilterFactory" maxGramSize="40" minGramSize="2"/>
+ * </analyzer>
+ * <analyzer type="query">
+ * <tokenizer class="solr.KeywordTokenizerFactory"/>
+ * <filter class="edu.umich.library.lucene.analysis.AnyCallNumberSimpleFilterFactory" passThroughOnError="true"/>
+ * </analyzer>
  * </fieldType>
  */
 public class AnyCallNumberSimpleFilterFactory extends TokenFilterFactory {
-  private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-  private Boolean passThroughOnError;
-  private Boolean allowTruncated;
+    private Boolean allowTruncated;
+    private Boolean passThroughOnError;
 
-  public AnyCallNumberSimpleFilterFactory(Map<String, String> args) {
-    super(args);
-    passThroughOnError = getBoolean(args, "passThroughOnError", false);
-    allowTruncated = getBoolean(args, "allowTruncated", true);
-  }
 
-  @Override
-  public AnyCallNumberSimpleFilter create(TokenStream input) {
-    return new AnyCallNumberSimpleFilter(input, this.passThroughOnError, this.allowTruncated);
-  }
+    public AnyCallNumberSimpleFilterFactory(Map<String, String> args) {
+        super(args);
+        allowTruncated = getBoolean(args, "allowTruncated", true);
+        passThroughOnError = getBoolean(args, "passThroughOnError", false);
+    }
+
+    @Override
+    public AnyCallNumberSimpleFilter create(TokenStream input) {
+        return new AnyCallNumberSimpleFilter(input, this.allowTruncated, this.passThroughOnError);
+    }
 }

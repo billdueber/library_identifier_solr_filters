@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class CallNumberSortKeyFieldType extends StrField {
   private static final Logger log = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
-  protected Boolean passThroughOnError = false;
   protected Boolean allowTruncated = true;
+  protected Boolean passThroughOnError = false;
 
   // Field delimiter sorts last
   private final String FIELD_DELIMITER = "}";
@@ -22,15 +22,16 @@ public class CallNumberSortKeyFieldType extends StrField {
 
   protected void init(IndexSchema schema, Map<String, String> args) {
     super.init(schema, args);
-    String p = args.remove("passThroughOnError");
-    if (p != null) {
-      passThroughOnError = Boolean.parseBoolean(p);
-    }
 
     String trunc = args.remove("allowTruncated");
     if (trunc != null) {
       allowTruncated = true;
     }
+    String ptoe = args.remove("passThroughOnError");
+    if (ptoe != null) {
+      passThroughOnError = Boolean.parseBoolean(ptoe);
+    }
+
   }
 
 
@@ -45,12 +46,16 @@ public class CallNumberSortKeyFieldType extends StrField {
     AnyCallNumberSimple cn = new AnyCallNumberSimple(fields[0]);
 
     // Valid? Return it
-    if (cn.hasValidKey()) return bundled_fields(cn.validKey(), appended_fields);
-    if (allowTruncated && cn.hasAcceptableTruncatedKey()) return bundled_fields(cn.acceptableTruncatedKey(), appended_fields);
+    if (cn.hasValidKey()) {
+      return bundled_fields(cn.validKey(), appended_fields);
+    }
+    if (allowTruncated && cn.hasAcceptableTruncatedKey()) {
+      return bundled_fields(cn.acceptableTruncatedKey(), appended_fields);
+    }
 
     // Not valid at all, so if we're not passing through, return null.
     if (passThroughOnError) {
-      return  bundled_fields(cn.invalidKey(), appended_fields);
+      return bundled_fields(cn.invalidKey(), appended_fields);
     } else {
       return null;
     }

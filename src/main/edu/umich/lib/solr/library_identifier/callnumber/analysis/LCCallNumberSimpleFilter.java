@@ -40,17 +40,18 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
    * or return nothing (default)
    */
 
-  private Boolean passThroughOnError;
   private Boolean allowTruncated;
+  private Boolean passThroughOnError;
+
 
   /**
    * @param aStream A {@link TokenStream} that parses streams with
    *                ISO-639-1 and ISO-639-2 codes
    */
-  public LCCallNumberSimpleFilter(TokenStream aStream, Boolean passThroughOnError, Boolean allowTruncated) {
+  public LCCallNumberSimpleFilter(TokenStream aStream,  Boolean allowTruncated, Boolean passThroughOnError) {
     super(aStream);
-    this.passThroughOnError = passThroughOnError;
     this.allowTruncated     = allowTruncated;
+    this.passThroughOnError = passThroughOnError;
   }
 
   public LCCallNumberSimpleFilter(TokenStream aStream) {
@@ -75,7 +76,7 @@ public final class LCCallNumberSimpleFilter extends TokenFilter {
       try {
         myTermAttribute.setEmpty();
         LCCallNumberSimple lc = new LCCallNumberSimple(t);
-        String key = lc.bestKey(passThroughOnError, allowTruncated);
+        String key = lc.bestKey(allowTruncated, passThroughOnError);
         if (key == null) {
           return false;
         } else {
