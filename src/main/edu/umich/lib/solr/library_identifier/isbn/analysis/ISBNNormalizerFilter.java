@@ -10,11 +10,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 
 /**
- * Created with IntelliJ IDEA.
- * User: dueberb
- * Date: 1/30/15
- * Time: 3:14 PM
- * To change this template use File | Settings | File Templates.
+ * @author Bill Dueber dueberb@umich.edu
  */
 public class ISBNNormalizerFilter extends TokenFilter {
     /**
@@ -30,7 +26,7 @@ public class ISBNNormalizerFilter extends TokenFilter {
             addAttribute(CharTermAttribute.class);
 
     /**
-     * A Solr filter that parses ISO-639-1 and ISO-639-2 codes into English text
+     * A Solr filter that parses ISO-639-1 and ISO-639-2 (ISBN) codes into English text
      * that can be used as a facet.
      *
      * @param aStream A {@link TokenStream} that parses streams with
@@ -56,7 +52,6 @@ public class ISBNNormalizerFilter extends TokenFilter {
 
         if (t != null && t.length() != 0) {
             try {
-//                String normalized = ISBNNormalizer.normalize(t);
                 myTermAttribute.setEmpty().append(ISBNNormalizer.normalize(t));
             } catch (IllegalArgumentException details) {
                 if (LOGGER.isDebugEnabled()) {
